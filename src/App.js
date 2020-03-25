@@ -326,6 +326,32 @@ class FlavorForm extends React.Component {
   }
 }
 
+// ! 非受控组件
+class FileInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.fileInput = React.createRef();
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    alert(`Selected file - ${this.fileInput.current.files[0].name}`);
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Upload file:
+          <input type="file" ref={this.fileInput} />
+        </label>
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+    );
+  }
+}
+
 /**
  * App
  */
@@ -343,37 +369,40 @@ function App() {
       </header>
 
       <section>
-        {/* 函数组件 */}
+        <h1 className="step-title">函数组件：</h1>
         <Welcome name="world" />
         <Welcome name="Sara" />
         <Welcome2 name="Duyb" />
 
-        {/* 组合组件 */}
+        <h1 className="step-title">组合组件 ：</h1>
         <Comment date={comment.date} text={comment.text} author={comment.author} />
 
-        {/* State & 生命周期 */}
+        <h1 className="step-title">State & 生命周期 ：</h1>
         <Clock />
         <Clock />
         <Clock />
 
         <Toggle />
 
-        {/* 事件处理 */}
+        <h1 className="step-title">事件处理 ：</h1>
         <LoggingButton />
 
-        {/* 条件渲染 */}
+        <h1 className="step-title">条件渲染 ：</h1>
         <LoginControl />
-        {/* 与运算符 && */}
+        <h2>与运算符 && ：</h2>
         <Mailbox unreadMessages={messages} />
-        {/* 阻止组件渲染 */}
+        <h2>阻止组件渲染</h2>
         <Page />
 
-        {/* 列表 & Key */}
+        <h1 className="step-title">列表 & Key：</h1>
         <NumberList numbers={numbers} />
 
-        {/* 表单 */}
+        <h1 className="step-title">表单：</h1>
         <NameForm />
         <FlavorForm />
+
+        <h1 className="step-title">非受控组件：</h1>
+        <FileInput />
       </section>
     </div>
   );

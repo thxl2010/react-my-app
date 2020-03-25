@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.step-title {
+  background-color: #f1f1f1;
+  border-top: #f90 1px solid;
+}
