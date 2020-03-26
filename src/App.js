@@ -354,6 +354,9 @@ class FileInput extends React.Component {
 
 /**
  * 状态提升：在 React 中，将多个组件中需要共享的 state 向上移动到它们的最近共同父组件中，便可实现共享 state。
+ *
+ * 创建一个用于计算水在给定温度下是否会沸腾的温度计算器
+ * 提供摄氏/华氏度的输入框，并保持两个输入框的数据同步
  */
 function BoilingVerdict(props) {
   if (props.celsius >= 100) {
@@ -439,7 +442,249 @@ class Calculator extends React.Component {
 }
 
 /**
+ * Fragment：组件返回一个子元素列表 : key 是唯一可以传递给 Fragment 的属性。未来可能会添加对其他属性的支持，例如事件。
+ * 短语法： <> : 不支持 key 或属性
+ */
+function ListItem({ item }) {
+  return (
+    <React.Fragment>
+      <dt>{item.term}</dt>
+      <dd>{item.description}</dd>
+    </React.Fragment>
+  );
+}
+
+function Columns2({ item }) {
+  const style = {
+    textAlign: 'center',
+    border: '1px solid red',
+  };
+
+  return (
+    <>
+      <td style={style}>{item.term}</td>
+      <td style={style}>{item.description}</td>
+    </>
+  );
+}
+class Columns extends React.Component {
+  render() {
+    const item = this.props.item;
+
+    return (
+      <>
+        <td>{item.term}</td>
+        <td>{item.description}</td>
+      </>
+    );
+  }
+}
+
+function Glossary(props) {
+  return (
+    <dl>
+      {props.items.map((item) => (
+        <ListItem item={item} key={item.id} />
+      ))}
+    </dl>
+  );
+}
+
+class Table extends React.Component {
+  render() {
+    const items = this.props.items;
+    const style = {
+      textAlign: 'center',
+      border: '1px solid #ddd',
+    };
+
+    return (
+      <div>
+        <table style={style}>
+          <thead>
+            <tr>
+              <th>品牌</th>
+              <th>简介</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.id}>
+                <Columns item={item} />
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <table style={style}>
+          <thead>
+            <tr>
+              <th>品牌</th>
+              <th>简介</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.id}>
+                <Columns2 item={item} />
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+}
+
+const items = [
+  {
+    id: 'a12df',
+    term: 'HuaWei Mate X',
+    description: 'HUAWEI Mate X, 5G折叠人工智能手机',
+  },
+  {
+    id: 'b2c3c',
+    term: 'MI 10',
+    description: ' 骁龙865 1亿像素8K电影相机 50倍变焦 平衡立体声',
+  },
+];
+
+/**
+ * 无障碍
+ */
+// 使用程序管理焦点
+class CustomTextInput extends React.Component {
+  constructor(props) {
+    super(props);
+    // 创造一个 textInput DOM 元素的 ref
+    this.textInput = React.createRef();
+
+    this.focus = this.focus.bind(this);
+  }
+
+  focus() {
+    // 使用原始的 DOM API 显式地聚焦在 text input 上
+    // 注意：我们通过访问 “current” 来获得 DOM 节点
+    this.textInput.current.focus();
+  }
+
+  render() {
+    // 使用 `ref` 回调函数以在实例的一个变量中存储文本输入 DOM 元素
+    //（比如，this.textInput）。
+    return (
+      <div>
+        <input type="text" ref={this.textInput} />
+        <button onClick={this.focus}>获取焦点</button>
+      </div>
+    );
+  }
+}
+
+// 无障碍 ：外部点击模式，用户可以通过点击元素以外的地方来关闭已打开的弹出框。
+class BlurExample extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { isOpen: false };
+    this.timeOutId = null;
+
+    this.onClickHandler = this.onClickHandler.bind(this);
+    this.onBlurHandler = this.onBlurHandler.bind(this);
+    this.onFocusHandler = this.onFocusHandler.bind(this);
+  }
+
+  onClickHandler() {
+    this.setState((currentState) => ({
+      isOpen: !currentState.isOpen,
+    }));
+  }
+
+  // 我们在下一个时间点使用 setTimeout 关闭弹窗。
+  // 这是必要的，因为失去焦点事件会在新的焦点事件前被触发，
+  // 我们需要通过这个步骤确认这个元素的一个子节点
+  // 是否得到了焦点。
+  onBlurHandler() {
+    this.timeOutId = setTimeout(() => {
+      this.setState({
+        isOpen: false,
+      });
+    });
+  }
+
+  // 如果一个子节点获得了焦点，不要关闭弹窗。
+  onFocusHandler() {
+    clearTimeout(this.timeOutId);
+  }
+
+  render() {
+    // React 通过把失去焦点和获得焦点事件传输给父节点
+    // 来帮助我们。
+    return (
+      <div onBlur={this.onBlurHandler} onFocus={this.onFocusHandler}>
+        <button onClick={this.onClickHandler} aria-haspopup="true" aria-expanded={this.state.isOpen}>
+          Select an option
+        </button>
+        {this.state.isOpen && (
+          <ul>
+            <li>Option 1</li>
+            <li>Option 2</li>
+            <li>Option 3</li>
+          </ul>
+        )}
+      </div>
+    );
+  }
+}
+
+/**
+ * Context
+ */
+// Context 可以让我们无须明确地传遍每一个组件，就能将值深入传递进组件树。
+// 为当前的 theme 创建一个 context（“light”为默认值）。
+const ThemeContext = React.createContext('light');
+class ThemeApp extends React.Component {
+  render() {
+    // 使用一个 Provider 来将当前的 theme 传递给以下的组件树。
+    // 无论多深，任何组件都能读取这个值。
+    // 在这个例子中，我们将 “dark” 作为当前的值传递下去。
+    return (
+      <ThemeContext.Provider value="dark">
+        <Toolbar />
+      </ThemeContext.Provider>
+    );
+  }
+}
+
+// 中间的组件再也不必指明往下传递 theme 了。
+function Toolbar() {
+  return (
+    <div>
+      <ThemedButton />
+    </div>
+  );
+}
+
+class ThemedButton extends React.Component {
+  // 指定 contextType 读取当前的 theme context。
+  // React 会往上找到最近的 theme Provider，然后使用它的值。
+  // 在这个例子中，当前的 theme 值为 “dark”。
+  static contextType = ThemeContext;
+  render() {
+    return <Button theme={this.context} />;
+  }
+}
+
+class Button extends React.Component {
+  render() {
+    console.log('this.props.theme :', this.props.theme);
+    return <button className={this.props.theme}>按钮</button>;
+  }
+}
+
+/**
+ * =============================================================================
  * App
+ * =============================================================================
  */
 function App() {
   return (
@@ -492,6 +737,15 @@ function App() {
 
         <h1 className="step-title">状态提升：</h1>
         <Calculator />
+        <h1 className="step-title">Fragment ：</h1>
+        <Glossary items={items} />
+        <h1 className="step-title">无障碍 ：使用程序管理焦点</h1>
+        <Table items={items} />
+        <h1 className="step-title">无障碍 ：外部点击模式，用户可以通过点击元素以外的地方来关闭已打开的弹出框。</h1>
+        <CustomTextInput />
+        <h1 className="step-title">Context：</h1>
+        <BlurExample />
+        <ThemeApp/>
       </section>
     </div>
   );
