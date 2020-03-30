@@ -859,7 +859,7 @@ function WrapperComp(Comp) {
   return WrapComp;
 }
 
-@WrapperComp()
+@WrapperComp
 class A2 extends React.Component {
   render() {
     return <h4>hello Jason</h4>;
@@ -954,6 +954,7 @@ function App() {
 
         <h1 className="step-title">高阶组件：</h1>
         <A />
+        <B />
         <A2 />
         <A3 />
       </section>
