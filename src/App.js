@@ -789,11 +789,11 @@ class A extends React.Component {
     };
   }
   componentDidMount() {
-    let data = '初始化数据';
+    let data = '初始化数据A';
     this.setState({ data });
   }
   handleChange() {
-    this.setState({ data: '改变数据' });
+    this.setState({ data: '改变数据A' });
   }
   render() {
     return (
@@ -811,11 +811,11 @@ class B extends React.Component {
     this.state = { data: 'data' };
   }
   componentDidMount() {
-    let data = '初始化数据';
+    let data = '初始化数据B';
     this.setState({ data });
   }
   handleChange() {
-    this.setState({ data: '改变数据' });
+    this.setState({ data: '改变数据B' });
   }
   render() {
     return (
@@ -844,7 +844,7 @@ function hocBox(WrappedComponent) {
   };
 }
 
-// 使用
+// 使用: 属性代理(Props Proxy)  多用于组件的复用，例如装饰器
 function WrapperComp(Comp) {
   class WrapComp extends React.Component {
     render() {
@@ -862,32 +862,62 @@ function WrapperComp(Comp) {
 @WrapperComp
 class A2 extends React.Component {
   render() {
-    return <h4>hello Jason</h4>;
+    return <h4>hello DU -</h4>;
   }
 }
 
-// 反向继承的高阶组件中的state和props会覆盖调原组件中的state和props
+// 使用：反向继承(Inheritance Inversion) 的高阶组件中的state和props会覆盖调原组件中的state和props
 function WrapperComp3(Comp) {
   class WrapComp extends Comp {
-      componentDidMount() {
-          console.log('反向代理高阶组件')
-      }
-      render() {
-          return <Comp {...this.props}></Comp>
-      }
+    componentDidMount() {
+      console.log('反向代理高阶组件');
+    }
+    render() {
+      return <Comp {...this.props}></Comp>;
+    }
   }
   return WrapComp;
 }
 @WrapperComp3
 class A3 extends React.Component {
   componentDidMount() {
-      console.log('加载完成')
+    console.log('加载完成');
   }
   render() {
-      return <h4>反向继承父组件</h4>
+    return <h4>反向继承父组件</h4>;
   }
 }
 
+/**
+ * 高阶组件示例2
+ */
+function withHeader(WrappedComponent) {
+  return class HOC extends React.Component {
+    render() {
+      return (
+        <div>
+          <div className="demo-header">我是标题</div>
+          <WrappedComponent {...this.props} />
+        </div>
+      );
+    }
+  };
+}
+
+@withHeader
+class Demo extends React.Component {
+  render() {
+    return <div>我是一个普通组件</div>;
+  }
+}
+
+// 等同于以下写法
+class Demo1 extends React.Component {
+  render() {
+    return <div>我是一个普通组件</div>;
+  }
+}
+const EnhanceDemo = withHeader(Demo1);
 
 /**
  * =============================================================================
@@ -950,13 +980,21 @@ function App() {
           <ThemeApp />
         </ErrorBoundary>
         <h1 className="step-title">Ref 转发：</h1>
-        <FancyButton ref={refButton}>Click me!</FancyButton>;<h1 className="step-title">高阶组件：</h1>
+        <FancyButton ref={refButton}>Click me!</FancyButton>
 
         <h1 className="step-title">高阶组件：</h1>
         <A />
         <B />
+        <p>高阶组件：属性代理 多用于组件的复用，例如装饰器 》》》</p>
         <A2 />
+        <p>高阶组件：反向继承 的高阶组件中的state和props会覆盖调原组件中的state和props 》》》</p>
         <A3 />
+
+        <h2>高阶组件示例2： 》》》</h2>
+        <p>@withHeader :</p>
+        <Demo />
+        <p>const EnhanceDemo = withHeader(Demo); 》》》</p>
+        <EnhanceDemo />
       </section>
     </div>
   );
