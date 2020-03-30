@@ -712,6 +712,184 @@ class ErrorBoundary extends React.Component {
 }
 
 /**
+ * Ref 转发: https://zh-hans.reactjs.org/docs/forwarding-refs.html
+ */
+const FancyButton = React.forwardRef((props, ref) => (
+  <button ref={ref} className="FancyButton">
+    {props.children}
+  </button>
+));
+// 这样，使用 FancyButton 的组件可以获取底层 DOM 节点 button 的 ref ，并在必要时访问，就像其直接使用 DOM button 一样。
+const refButton = React.createRef();
+
+/**
+ * 高阶组件
+ */
+const CommentList = [];
+const BlogPost = {};
+const DataSource = {
+  getComments() {},
+  getBlogPost(id) {},
+  addChangeListener(callback) {
+    callback();
+  },
+  removeChangeListener(callback) {
+    callback();
+  },
+};
+const CommentListWithSubscription = withSubscription(CommentList, (DataSource) => DataSource.getComments());
+
+const BlogPostWithSubscription = withSubscription(BlogPost, (DataSource, props) => DataSource.getBlogPost(props.id));
+
+// 高阶组件（HOC）：是参数为组件，返回值为新组件的函数
+function withSubscription(WrappedComponent, selectData) {
+  // ...并返回另一个组件...
+  return class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.handleChange = this.handleChange.bind(this);
+      this.state = {
+        data: selectData(DataSource, props),
+      };
+    }
+
+    componentDidMount() {
+      // ...负责订阅相关的操作...
+      DataSource.addChangeListener(this.handleChange);
+    }
+
+    componentWillUnmount() {
+      DataSource.removeChangeListener(this.handleChange);
+    }
+
+    handleChange() {
+      this.setState({
+        data: selectData(DataSource, this.props),
+      });
+    }
+
+    render() {
+      // ... 并使用新数据渲染被包装的组件!
+      // 请注意，我们可能还会传递其他属性
+      return <WrappedComponent data={this.state.data} {...this.props} />;
+    }
+  };
+}
+
+/**
+ * 高阶组件示例
+ * 假设我们有A B两个组件,他们的大部分实现都是相同的
+ */
+class A extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.state = {
+      data: 'data',
+    };
+  }
+  componentDidMount() {
+    let data = '初始化数据';
+    this.setState({ data });
+  }
+  handleChange() {
+    this.setState({ data: '改变数据' });
+  }
+  render() {
+    return (
+      <div>
+        <span>这是组件A自己的内容</span>
+        <h2 onClick={this.handleChange.bind(this)}>{this.props.data}</h2>
+      </div>
+    );
+  }
+}
+
+class B extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { data: 'data' };
+  }
+  componentDidMount() {
+    let data = '初始化数据';
+    this.setState({ data });
+  }
+  handleChange() {
+    this.setState({ data: '改变数据' });
+  }
+  render() {
+    return (
+      <div>
+        这是组件B自己的内容
+        <h2 onClick={this.handleChange.bind(this)}>{this.props.data}</h2>
+      </div>
+    );
+  }
+}
+
+// 根据两个组件的特性封装高阶组件（将两个组件共通点抽取出来）
+function hocBox(WrappedComponent) {
+  // ...并返回另一个组件...
+  return class extends React.Component {
+    componentWillMount() {
+      let data = '这是hoc的data';
+      this.setState({ data });
+    }
+    handleChange = () => {
+      this.setState({ data: '改变数据' });
+    };
+    render() {
+      return <WrappedComponent update={this._alert} {...this.props} />;
+    }
+  };
+}
+
+// 使用
+function WrapperComp(Comp) {
+  class WrapComp extends React.Component {
+    render() {
+      return (
+        <div>
+          <p>属性代理高阶组件</p>
+          <Comp {...this.props}></Comp>
+        </div>
+      );
+    }
+  }
+  return WrapComp;
+}
+
+@WrapperComp()
+class A2 extends React.Component {
+  render() {
+    return <h4>hello Jason</h4>;
+  }
+}
+
+// 反向继承的高阶组件中的state和props会覆盖调原组件中的state和props
+function WrapperComp3(Comp) {
+  class WrapComp extends Comp {
+      componentDidMount() {
+          console.log('反向代理高阶组件')
+      }
+      render() {
+          return <Comp {...this.props}></Comp>
+      }
+  }
+  return WrapComp;
+}
+@WrapperComp3
+class A3 extends React.Component {
+  componentDidMount() {
+      console.log('加载完成')
+  }
+  render() {
+      return <h4>反向继承父组件</h4>
+  }
+}
+
+
+/**
  * =============================================================================
  * App
  * =============================================================================
@@ -734,37 +912,28 @@ function App() {
         <Welcome name="world" />
         <Welcome name="Sara" />
         <Welcome2 name="Duyb" />
-
         <h1 className="step-title">组合组件 ：</h1>
         <Comment date={comment.date} text={comment.text} author={comment.author} />
-
         <h1 className="step-title">State & 生命周期 ：</h1>
         <Clock />
         <Clock />
         <Clock />
-
         <Toggle />
-
         <h1 className="step-title">事件处理 ：</h1>
         <LoggingButton />
-
         <h1 className="step-title">条件渲染 ：</h1>
         <LoginControl />
         <h2>与运算符 && ：</h2>
         <Mailbox unreadMessages={messages} />
         <h2>阻止组件渲染</h2>
         <Page />
-
         <h1 className="step-title">列表 & Key：</h1>
         <NumberList numbers={numbers} />
-
         <h1 className="step-title">表单：</h1>
         <NameForm />
         <FlavorForm />
-
         <h1 className="step-title">非受控组件：</h1>
         <FileInput />
-
         <h1 className="step-title">状态提升：</h1>
         <Calculator />
         <h1 className="step-title">Fragment ：</h1>
@@ -780,6 +949,13 @@ function App() {
         <ErrorBoundary>
           <ThemeApp />
         </ErrorBoundary>
+        <h1 className="step-title">Ref 转发：</h1>
+        <FancyButton ref={refButton}>Click me!</FancyButton>;<h1 className="step-title">高阶组件：</h1>
+
+        <h1 className="step-title">高阶组件：</h1>
+        <A />
+        <A2 />
+        <A3 />
       </section>
     </div>
   );
