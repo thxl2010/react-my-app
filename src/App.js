@@ -927,15 +927,24 @@ class Select extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      select: ['HuaWei', 'Facebook', 'Apple', 'Harvest']
+      select: ['HuaWei', 'Facebook', 'Apple', 'Harvest'],
+      style: {
+        minWidth: '100px'
+      }
     };
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(value) {
+    console.log(`onChange value : ${value}`);
   }
 
   render() {
     return (
-      <Chosen>
+      <Chosen onChange={this.handleChange} style={this.state.style}>
         {this.state.select.map((item) => {
-          return <option value={item}>{item}</option>;
+          return <option value={item} key={item}>{item}</option>;
         })}
       </Chosen>
     );
@@ -1020,7 +1029,7 @@ function App() {
         <EnhanceDemo />
 
         <h2>与第三方库协同： 》》》</h2>
-        <Chosen children={Select} />
+        <Select />
       </section>
     </div>
   );
