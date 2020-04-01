@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'antd';
 import './App.css';
 import logo from './logo.svg';
 import Chosen from './components/Chosen';
@@ -701,11 +702,11 @@ class ThemedButton extends React.Component {
   // 在这个例子中，当前的 theme 值为 “dark”。
   static contextType = ThemeContext;
   render() {
-    return <Button theme={this.context} />;
+    return <Button0 theme={this.context} />;
   }
 }
 
-class Button extends React.Component {
+class Button0 extends React.Component {
   render() {
     console.log('this.props.theme :', this.props.theme);
     return <button className={this.props.theme}>按钮</button>;
@@ -991,6 +992,34 @@ class Select extends React.Component {
 }
 
 /**
+ * 深入 JSX
+ * 属性展开
+ */
+class Greetings extends React.Component {
+  render() {
+    return (
+      <p>
+        hello, {this.props.firstName} {this.props.lastName}
+      </p>
+    );
+  }
+}
+function Greet1() {
+  return <Greetings firstName="Ben" lastName="Hector" />;
+}
+// 等价于
+function Greet2() {
+  const props = { firstName: 'Ben', lastName: 'Hector' };
+  return <Greetings {...props} />;
+}
+
+const Button2 = props => {
+  const { kind, ...other } = props;
+  const type = kind === 'primary' ? 'primary' : 'dashed';
+  return <Button type={type} {...other} />;
+};
+
+/**
  * =============================================================================
  * App
  * =============================================================================
@@ -1084,6 +1113,12 @@ function App() {
 
         <h2>与第三方库协同： 》》》</h2>
         <Select />
+        <h2>深入 JSX： 》》》 属性展开</h2>
+        <Greet1 />
+        <Greet2 />
+        <Button2 kind="primary" onClick={() => console.log('clicked!')}>
+          Hello World!
+        </Button2>
       </section>
     </div>
   );
