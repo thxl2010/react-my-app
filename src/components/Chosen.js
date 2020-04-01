@@ -1,5 +1,5 @@
-import 'chosen-js';
 import $ from 'jquery';
+import 'chosen-js';
 import React from 'react';
 
 /**
