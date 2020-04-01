@@ -2,7 +2,7 @@ import $ from 'jquery';
 import 'chosen-js';
 import React from 'react';
 
-import 'chosen-js/chosen.min.css'
+import 'chosen-js/chosen.min.css';
 
 /**
  * 与第三方库协同
@@ -18,7 +18,7 @@ export default class Chosen extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.children !== this.props.children) {
-      this.$el.trigger("chosen:updated");
+      this.$el.trigger('chosen:updated');
     }
   }
 
@@ -34,7 +34,11 @@ export default class Chosen extends React.Component {
   render() {
     return (
       <div>
-        <select className="Chosen-select" ref={el => this.el = el} style={this.props.style}>
+        <select
+          className="Chosen-select"
+          ref={el => (this.el = el)}
+          style={this.props.style}
+        >
           {this.props.children}
         </select>
       </div>

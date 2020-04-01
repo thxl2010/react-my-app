@@ -20,7 +20,9 @@ class Welcome2 extends React.Component {
  * 组合组件
  */
 function Avatar(props) {
-  return <img className="Avatar" src={props.user.avatarUrl} alt={props.user.name} />;
+  return (
+    <img className="Avatar" src={props.user.avatarUrl} alt={props.user.name} />
+  );
 }
 
 function UserInfo(props) {
@@ -104,13 +106,17 @@ class Toggle extends React.Component {
   }
 
   handleClick() {
-    this.setState((state) => ({
+    this.setState(state => ({
       isToggleOn: !state.isToggleOn,
     }));
   }
 
   render() {
-    return <button onClick={this.handleClick}>{this.state.isToggleOn ? 'ON' : 'OFF'}</button>;
+    return (
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      </button>
+    );
   }
 }
 
@@ -197,7 +203,9 @@ function Mailbox(props) {
   return (
     <div>
       <h1>Hello!</h1>
-      {unreadMessages.length > 0 && <h2>You have {unreadMessages.length} unread messages.</h2>}
+      {unreadMessages.length > 0 && (
+        <h2>You have {unreadMessages.length} unread messages.</h2>
+      )}
     </div>
   );
 }
@@ -220,7 +228,7 @@ class Page extends React.Component {
   }
 
   handleToggleClick() {
-    this.setState((state) => ({
+    this.setState(state => ({
       showWarning: !state.showWarning,
     }));
   }
@@ -229,7 +237,9 @@ class Page extends React.Component {
     return (
       <div>
         <WarningBanner warn={this.state.showWarning} />
-        <button onClick={this.handleToggleClick}>{this.state.showWarning ? 'Hide' : 'Show'}</button>
+        <button onClick={this.handleToggleClick}>
+          {this.state.showWarning ? 'Hide' : 'Show'}
+        </button>
       </div>
     );
   }
@@ -244,7 +254,9 @@ class Page extends React.Component {
  */
 function NumberList(props) {
   const numbers = props.numbers;
-  const listItems = numbers.map((number) => <li key={number.toString()}>{number}</li>);
+  const listItems = numbers.map(number => (
+    <li key={number.toString()}>{number}</li>
+  ));
   return <ul>{listItems}</ul>;
 }
 const numbers = [1, 2, 3, 4, 5];
@@ -276,7 +288,11 @@ class NameForm extends React.Component {
       <form onSubmit={this.handleSubmit}>
         <label>
           名字:
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
+          <input
+            type="text"
+            value={this.state.value}
+            onChange={this.handleChange}
+          />
           <p>{this.state.value}</p>
         </label>
         <input type="submit" value="提交" />
@@ -429,13 +445,23 @@ class Calculator extends React.Component {
   render() {
     const scale = this.state.scale;
     const temperature = this.state.temperature;
-    const celsius = scale === 'f' ? tryConvert(temperature, toCelsius) : temperature;
-    const fahrenheit = scale === 'c' ? tryConvert(temperature, toFahrenheit) : temperature;
+    const celsius =
+      scale === 'f' ? tryConvert(temperature, toCelsius) : temperature;
+    const fahrenheit =
+      scale === 'c' ? tryConvert(temperature, toFahrenheit) : temperature;
 
     return (
       <div>
-        <TemperatureInput scale="c" temperature={celsius} onTemperatureChange={this.handleCelsiusChange} />
-        <TemperatureInput scale="f" temperature={fahrenheit} onTemperatureChange={this.handleFahrenheitChange} />
+        <TemperatureInput
+          scale="c"
+          temperature={celsius}
+          onTemperatureChange={this.handleCelsiusChange}
+        />
+        <TemperatureInput
+          scale="f"
+          temperature={fahrenheit}
+          onTemperatureChange={this.handleFahrenheitChange}
+        />
         <BoilingVerdict celsius={parseFloat(celsius)} />
       </div>
     );
@@ -484,7 +510,7 @@ class Columns extends React.Component {
 function Glossary(props) {
   return (
     <dl>
-      {props.items.map((item) => (
+      {props.items.map(item => (
         <ListItem item={item} key={item.id} />
       ))}
     </dl>
@@ -509,7 +535,7 @@ class Table extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {items.map(item => (
               <tr key={item.id}>
                 <Columns item={item} />
               </tr>
@@ -525,7 +551,7 @@ class Table extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {items.map(item => (
               <tr key={item.id}>
                 <Columns2 item={item} />
               </tr>
@@ -595,7 +621,7 @@ class BlurExample extends React.Component {
   }
 
   onClickHandler() {
-    this.setState((currentState) => ({
+    this.setState(currentState => ({
       isOpen: !currentState.isOpen,
     }));
   }
@@ -622,7 +648,11 @@ class BlurExample extends React.Component {
     // 来帮助我们。
     return (
       <div onBlur={this.onBlurHandler} onFocus={this.onFocusHandler}>
-        <button onClick={this.onClickHandler} aria-haspopup="true" aria-expanded={this.state.isOpen}>
+        <button
+          onClick={this.onClickHandler}
+          aria-haspopup="true"
+          aria-expanded={this.state.isOpen}
+        >
           Select an option
         </button>
         {this.state.isOpen && (
@@ -738,9 +768,14 @@ const DataSource = {
     callback();
   },
 };
-const CommentListWithSubscription = withSubscription(CommentList, (DataSource) => DataSource.getComments());
+const CommentListWithSubscription = withSubscription(CommentList, DataSource =>
+  DataSource.getComments()
+);
 
-const BlogPostWithSubscription = withSubscription(BlogPost, (DataSource, props) => DataSource.getBlogPost(props.id));
+const BlogPostWithSubscription = withSubscription(
+  BlogPost,
+  (DataSource, props) => DataSource.getBlogPost(props.id)
+);
 
 // 高阶组件（HOC）：是参数为组件，返回值为新组件的函数
 function withSubscription(WrappedComponent, selectData) {
@@ -929,8 +964,8 @@ class Select extends React.Component {
     this.state = {
       select: ['HuaWei', 'Facebook', 'Apple', 'Harvest'],
       style: {
-        minWidth: '100px'
-      }
+        minWidth: '100px',
+      },
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -943,8 +978,12 @@ class Select extends React.Component {
   render() {
     return (
       <Chosen onChange={this.handleChange} style={this.state.style}>
-        {this.state.select.map((item) => {
-          return <option value={item} key={item}>{item}</option>;
+        {this.state.select.map(item => {
+          return (
+            <option value={item} key={item}>
+              {item}
+            </option>
+          );
         })}
       </Chosen>
     );
@@ -964,7 +1003,12 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Learn React
         </a>
       </header>
@@ -975,7 +1019,11 @@ function App() {
         <Welcome name="Sara" />
         <Welcome2 name="Duyb" />
         <h1 className="step-title">组合组件 ：</h1>
-        <Comment date={comment.date} text={comment.text} author={comment.author} />
+        <Comment
+          date={comment.date}
+          text={comment.text}
+          author={comment.author}
+        />
         <h1 className="step-title">State & 生命周期 ：</h1>
         <Clock />
         <Clock />
@@ -1003,7 +1051,10 @@ function App() {
         <Table items={items} />
         <h1 className="step-title">无障碍 ：使用程序管理焦点</h1>
         <CustomTextInput />
-        <h1 className="step-title">无障碍 ：外部点击模式，用户可以通过点击元素以外的地方来关闭已打开的弹出框。</h1>
+        <h1 className="step-title">
+          无障碍
+          ：外部点击模式，用户可以通过点击元素以外的地方来关闭已打开的弹出框。
+        </h1>
         <BlurExample />
         <h1 className="step-title">Context：</h1>
         <ThemeApp />
@@ -1019,7 +1070,10 @@ function App() {
         <B />
         <p>高阶组件：属性代理 多用于组件的复用，例如装饰器 》》》</p>
         <A2 />
-        <p>高阶组件：反向继承 的高阶组件中的state和props会覆盖调原组件中的state和props 》》》</p>
+        <p>
+          高阶组件：反向继承
+          的高阶组件中的state和props会覆盖调原组件中的state和props 》》》
+        </p>
         <A3 />
 
         <h2>高阶组件示例2： 》》》</h2>
