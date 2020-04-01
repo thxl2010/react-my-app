@@ -28,6 +28,7 @@
     "eslint-plugin-jsx-a11y": "6.2.3",
     "eslint-plugin-react": "7.19.0",
     "eslint-plugin-react-hooks": "^1.6.1",
+    "expose-loader": "^0.7.5",
     "file-loader": "4.3.0",
     "fs-extra": "^8.1.0",
     "html-webpack-plugin": "4.0.0-beta.11",
@@ -133,13 +134,22 @@
   },
   "babel": {
     "plugins": [
-      ["@babel/plugin-proposal-decorators", { "legacy": true }]
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ]
     ],
     "presets": [
       "react-app"
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-decorators": "^7.8.3"
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "chosen-js": "^1.8.7",
+    "jquery": "^3.4.1",
+    "node-sass": "^4.13.1",
+    "sass": "^1.26.3"
   }
 }

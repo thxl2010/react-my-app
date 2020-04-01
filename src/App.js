@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import logo from './logo.svg';
+import Chosen from './components/Chosen';
 
 /**
  * 函数组件
@@ -920,6 +921,28 @@ class Demo1 extends React.Component {
 const EnhanceDemo = withHeader(Demo1);
 
 /**
+ * 与第三方库协同 Chosen
+ */
+class Select extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      select: ['HuaWei', 'Facebook', 'Apple', 'Harvest']
+    };
+  }
+
+  render() {
+    return (
+      <Chosen>
+        {this.state.select.map((item) => {
+          return <option value={item}>{item}</option>;
+        })}
+      </Chosen>
+    );
+  }
+}
+
+/**
  * =============================================================================
  * App
  * =============================================================================
@@ -995,6 +1018,9 @@ function App() {
         <Demo />
         <p>const EnhanceDemo = withHeader(Demo); 》》》</p>
         <EnhanceDemo />
+
+        <h2>与第三方库协同： 》》》</h2>
+        <Chosen children={Select} />
       </section>
     </div>
   );
