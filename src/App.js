@@ -1,8 +1,9 @@
-import React from 'react';
 import { Button } from 'antd';
+// import React from 'react';
+import React, { useState, useEffect } from 'react'; // Hook
 import './App.css';
-import logo from './logo.svg';
 import Chosen from './components/Chosen';
+import logo from './logo.svg';
 
 /**
  * 函数组件
@@ -1020,6 +1021,166 @@ const Button2 = props => {
 };
 
 /**
+ * 不使用es6
+ */
+var createReactClass = require('create-react-class');
+var Greeting5 = createReactClass({
+  // 声明默认属性
+  getDefaultProps: function() {
+    return {
+      name: 'Mary',
+    };
+  },
+
+  // 初始化 State
+  getInitialState: function() {
+    return { count: this.props.initialCount };
+  },
+
+  // 如果使用 createReactClass() 方法创建组件，组件中的方法会自动绑定至实例，所以不需要显式地绑定 this
+  handleClick: function() {
+    alert(this.state.message);
+  },
+
+  render: function() {
+    return (
+      <div>
+        <h1>Hello, {this.props.name}</h1>
+        <button onClick={this.handleClick}>Say hello</button>
+      </div>
+    );
+  },
+});
+
+/**
+ * 不使用JSX
+ */
+class HelloNoJSX extends React.Component {
+  render() {
+    return React.createElement('div', null, `Hello ${this.props.toWhat}`);
+  }
+}
+
+/**
+ * Render Props
+ * render prop 是一个用于告知组件需要渲染什么内容的函数 prop
+ */
+class Cat extends React.Component {
+  render() {
+    const mouse = this.props.mouse;
+    return (
+      <img
+        src="/cat.png"
+        alt="cat"
+        style={{
+          position: 'absolute',
+          width: '40px',
+          left: mouse.x,
+          top: mouse.y,
+        }}
+      />
+    );
+  }
+}
+
+class Mouse extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.state = { x: 0, y: 0 };
+  }
+
+  handleMouseMove(event) {
+    this.setState({
+      x: event.clientX,
+      y: event.clientY,
+    });
+  }
+
+  render() {
+    return (
+      <div
+        style={{ height: '100vh', backgroundColor: '#ecd0d0' }}
+        onMouseMove={this.handleMouseMove}
+      >
+        {/*
+          Instead of providing a static representation of what <Mouse> renders,
+          use the `render` prop to dynamically determine what to render.
+        */}
+        {this.props.render(this.state)}
+      </div>
+    );
+  }
+}
+
+class MouseTracker extends React.Component {
+  render() {
+    return (
+      <div style={{ position: 'relative' }}>
+        <h1>移动鼠标!</h1>
+        <Mouse render={mouse => <Cat mouse={mouse} />} />
+      </div>
+    );
+  }
+}
+
+/*
+如果你在 render 方法里创建函数，那么使用 render prop 会抵消使用 `React.PureComponent` 带来的优势。
+因为浅比较 props 的时候总会得到 false，并且在这种情况下每一个 render 对于 render prop 将会生成一个新的值。​
+为了绕过这一问题，有时你可以定义一个 prop 作为实例方法:
+ */
+class MouseTracker2 extends React.Component {
+  // 定义为实例方法，`this.renderTheCat`始终
+  // 当我们在渲染中使用它时，它指的是相同的函数
+  renderTheCat(mouse) {
+    return <Cat mouse={mouse} />;
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Move the mouse around!</h1>
+        <Mouse render={this.renderTheCat} />
+      </div>
+    );
+  }
+}
+
+/**
+ * ========
+ * [Hook](https://zh-hans.reactjs.org/docs/hooks-intro.html)
+ * ========
+ * Hook 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性(Hook 不能在 class 组件中使用)。
+ * Hook 将组件中相互关联的部分拆分成更小的函数（比如设置订阅或请求数据），而并非强制按照生命周期划分。
+ */
+function HookExample() {
+  // 声明一个新的叫做 “count” 的 state 变量
+  // useState 会返回一对值：当前状态和一个让你更新它的函数。
+  // 它类似 class 组件的 this.setState，但是它不会把新的 state 和旧的 state 进行合并
+  // useState 唯一的参数就是初始 state
+  const [count, setCount] = useState(0);
+
+  // 声明多个 state 变量！
+  const [age, setAge] = useState(42);
+  const [fruit, setFruit] = useState('banana');
+  const [todos, setTodos] = useState([{ text: 'Learn Hooks' }]);
+
+  // Effect Hook
+  // 相当于 componentDidMount 和 componentDidUpdate:
+  useEffect(() => {
+    // 使用浏览器的 API 更新页面标题
+    document.title = `You clicked ${count} times`;
+  });
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  );
+}
+
+/**
  * =============================================================================
  * App
  * =============================================================================
@@ -1119,6 +1280,19 @@ function App() {
         <Button2 kind="primary" onClick={() => console.log('clicked!')}>
           Hello World!
         </Button2>
+
+        <h2>不使用es6： 》》》 使用 create-react-class 模块</h2>
+        <Greeting5 name={'DU'} />
+        <h2>不使用JSX： 》》》 React.createElement</h2>
+        <HelloNoJSX toWhat={'Du'} />
+        <h2>Render Props： 》》》</h2>
+        <MouseTracker />
+
+        <h2>
+          Hook： 》》》 Hook 是 React 16.8 的新增特性。它可以让你在不编写 class
+          的情况下使用 state 以及其他的 React 特性。
+        </h2>
+        <HookExample />
       </section>
     </div>
   );
