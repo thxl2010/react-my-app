@@ -1180,6 +1180,50 @@ function HookExample() {
   );
 }
 
+function Counter({initialCount}) {
+  const [count, setCount] = useState(initialCount);
+  return (
+    <>
+      Count: {count}
+      <button onClick={() => setCount(initialCount)}>Reset</button>
+      <button onClick={() => setCount(prevCount => prevCount - 1)}>-</button>
+      <button onClick={() => setCount(prevCount => prevCount + 1)}>+</button>
+    </>
+  );
+}
+
+/**
+ * 自定义Hook
+ */
+function useFriendStatus(friendID) {
+  const [isOnline, setIsOnline] = useState(null);
+
+  useEffect(() => {
+    function handleStatusChange(status) {
+      setIsOnline(status.isOnline);
+    }
+
+    // ChatAPI.subscribeToFriendStatus(friendID, handleStatusChange);
+    return () => {
+      // ChatAPI.unsubscribeFromFriendStatus(friendID, handleStatusChange);
+    };
+  });
+
+  return isOnline;
+}
+
+// 使用
+function FriendListItem(props) {
+  const isOnline = useFriendStatus(props.friend.id);
+
+  return (
+    <li style={{ color: isOnline ? 'green' : 'black' }}>
+      {props.friend.name}
+    </li>
+  );
+}
+
+
 /**
  * =============================================================================
  * App
@@ -1293,6 +1337,7 @@ function App() {
           的情况下使用 state 以及其他的 React 特性。
         </h2>
         <HookExample />
+        <Counter initialCount={10}/>
       </section>
     </div>
   );
