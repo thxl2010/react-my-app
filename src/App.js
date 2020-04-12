@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 // import React from 'react';
-import React, { useState, useEffect } from 'react'; // Hook
+import React, { useState, useEffect, useContext } from 'react'; // Hook
 import './App.css';
 import Chosen from './components/Chosen';
 import logo from './logo.svg';
@@ -693,6 +693,7 @@ function Toolbar() {
   return (
     <div>
       <ThemedButton />
+      <ThemedButtonOfUseContext />
     </div>
   );
 }
@@ -705,6 +706,12 @@ class ThemedButton extends React.Component {
   render() {
     return <Button0 theme={this.context} />;
   }
+}
+
+// ! WARNING: Hook.useContext
+function ThemedButtonOfUseContext() {
+  const theme = useContext(ThemeContext);
+  return <Button0 theme={theme} />;
 }
 
 class Button0 extends React.Component {
@@ -1026,23 +1033,23 @@ const Button2 = props => {
 var createReactClass = require('create-react-class');
 var Greeting5 = createReactClass({
   // 声明默认属性
-  getDefaultProps: function() {
+  getDefaultProps: function () {
     return {
       name: 'Mary',
     };
   },
 
   // 初始化 State
-  getInitialState: function() {
+  getInitialState: function () {
     return { count: this.props.initialCount };
   },
 
   // 如果使用 createReactClass() 方法创建组件，组件中的方法会自动绑定至实例，所以不需要显式地绑定 this
-  handleClick: function() {
+  handleClick: function () {
     alert(this.state.message);
   },
 
-  render: function() {
+  render: function () {
     return (
       <div>
         <h1>Hello, {this.props.name}</h1>
@@ -1180,7 +1187,7 @@ function HookExample() {
   );
 }
 
-function Counter({initialCount}) {
+function Counter({ initialCount }) {
   const [count, setCount] = useState(initialCount);
   return (
     <>
@@ -1217,12 +1224,9 @@ function FriendListItem(props) {
   const isOnline = useFriendStatus(props.friend.id);
 
   return (
-    <li style={{ color: isOnline ? 'green' : 'black' }}>
-      {props.friend.name}
-    </li>
+    <li style={{ color: isOnline ? 'green' : 'black' }}>{props.friend.name}</li>
   );
 }
-
 
 /**
  * =============================================================================
@@ -1337,7 +1341,7 @@ function App() {
           的情况下使用 state 以及其他的 React 特性。
         </h2>
         <HookExample />
-        <Counter initialCount={10}/>
+        <Counter initialCount={10} />
       </section>
     </div>
   );
