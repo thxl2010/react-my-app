@@ -57,6 +57,61 @@ const comment = {
 };
 
 /**
+ * 生命周期
+ */
+class ButtonLifeCycle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { data: 0 };
+    this.setNewNumber = this.setNewNumber.bind(this);
+  }
+
+  setNewNumber() {
+    this.setState({ data: this.state.data + 1 });
+  }
+  render() {
+    return (
+      <div>
+        <button onClick={this.setNewNumber}>INCREMENT</button>
+        <ContentLifeCycle myNumber={this.state.data}></ContentLifeCycle>
+      </div>
+    );
+  }
+}
+
+class ContentLifeCycle extends React.Component {
+  componentWillMount() {
+    console.log('生命周期：Component WILL MOUNT!');
+  }
+  componentDidMount() {
+    console.log('生命周期：Component DID MOUNT!');
+  }
+  componentWillReceiveProps(newProps) {
+    console.log('生命周期：Component WILL RECEIVE PROPS!');
+  }
+  shouldComponentUpdate(newProps, newState) {
+    return true;
+  }
+  componentWillUpdate(nextProps, nextState) {
+    console.log('生命周期：Component WILL UPDATE!');
+  }
+  componentDidUpdate(prevProps, prevState) {
+    console.log('生命周期：Component DID UPDATE!');
+  }
+  componentWillUnmount() {
+    console.log('生命周期：Component WILL UNMOUNT!');
+  }
+
+  render() {
+    return (
+      <div>
+        <h3>{this.props.myNumber}</h3>
+      </div>
+    );
+  }
+}
+
+/**
  * State & 生命周期
  */
 class Clock extends React.Component {
@@ -1182,17 +1237,14 @@ class Modal extends React.Component {
   }
 
   render() {
-    return ReactDOM.createPortal(
-      this.props.children,
-      this.el
-    );
+    return ReactDOM.createPortal(this.props.children, this.el);
   }
 }
 
 class Parent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {clicks: 0};
+    this.state = { clicks: 0 };
     this.handleClick = this.handleClick.bind(this);
   }
 
@@ -1201,7 +1253,7 @@ class Parent extends React.Component {
     // 这个将会被触发更新父元素的 state，
     // 即使这个按钮在 DOM 中不是直接关联的后代
     this.setState(state => ({
-      clicks: state.clicks + 1
+      clicks: state.clicks + 1,
     }));
   }
 
@@ -1210,10 +1262,8 @@ class Parent extends React.Component {
       <div onClick={this.handleClick}>
         <p>Number of clicks: {this.state.clicks}</p>
         <p>
-          Open up the browser DevTools
-          to observe that the button
-          is not a child of the div
-          with the onClick handler.
+          Open up the browser DevTools to observe that the button is not a child
+          of the div with the onClick handler.
         </p>
         <Modal>
           <Child />
@@ -1228,7 +1278,7 @@ function Child() {
   // 因为这里没有定义 'onClick' 属性
   return (
     <div className="modal">
-      <button>Click  Portal</button>
+      <button>Click Portal</button>
       <button>hide</button>
     </div>
   );
@@ -1343,6 +1393,14 @@ function App() {
           text={comment.text}
           author={comment.author}
         />
+        <h1 className="step-title"> 生命周期 ：</h1>
+        <p>
+          <a
+            href="https://www.runoob.com/react/react-component-life-cycle.html"
+            target="_blank"
+          >React 组件生命周期</a>
+        </p>
+        <ButtonLifeCycle />
         <h1 className="step-title">State & 生命周期 ：</h1>
         <Clock />
         <Clock />
@@ -1417,7 +1475,10 @@ function App() {
         <h2>Render Props： 》》》</h2>
         <MouseTracker />
 
-        <h2>Portal 》》》 提供了一种将子节点渲染到存在于父组件以外的 DOM 节点的优秀的方案</h2>
+        <h2>
+          Portal 》》》 提供了一种将子节点渲染到存在于父组件以外的 DOM
+          节点的优秀的方案
+        </h2>
         <Parent />
 
         <h2>
