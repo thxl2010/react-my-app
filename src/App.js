@@ -1,6 +1,12 @@
 import { Button } from 'antd';
 // import React from 'react';
-import React, { useState, useEffect, useContext } from 'react'; // Hook
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useContext,
+} from 'react'; // Hook
 import ReactDOM from 'react-dom';
 import './App.css';
 import Chosen from './components/Chosen';
@@ -665,6 +671,21 @@ class CustomTextInput extends React.Component {
   }
 }
 
+// Hook : useRef
+function TextInputWithFocusButton() {
+  const inputEl = useRef(null);
+  const onButtonClick = () => {
+    // `current` 指向已挂载到 DOM 上的文本输入元素
+    inputEl.current.focus();
+  };
+  return (
+    <>
+      <input ref={inputEl} type="text" />
+      <button onClick={onButtonClick}>Focus the input</button>
+    </>
+  );
+}
+
 // 无障碍 ：外部点击模式，用户可以通过点击元素以外的地方来关闭已打开的弹出框。
 class BlurExample extends React.Component {
   constructor(props) {
@@ -1320,12 +1341,50 @@ function HookExample() {
 
 function Counter({ initialCount }) {
   const [count, setCount] = useState(initialCount);
+
+  // ! WARNING: Capture Value
+  // 可以认为每次 Render 的内容都会形成一个快照并保留下来，因此当状态变更而 Rerender 时，就形成了 N 个 Render 状态，
+  // 而每个 Render 状态都拥有自己固定不变的 Props 与 State。
+
+  // useEffect 在实际 DOM 渲染完毕后执行
+  useEffect(() => {
+    setTimeout(() => {
+      console.log('useEffect count: ' + count);
+    }, 3000);
+  }, [count]);
+
+  const handleAlertClick = useCallback(() => {
+    setTimeout(() => {
+      console.log('useCallback You clicked on: ' + count);
+    }, 3000);
+  }, [count]);
+
+  const countRef = useRef(null);
+  const handleAlertClick2 = useCallback(() => {
+    setTimeout(() => {
+      console.log('useRef useCallback You clicked on: ' + countRef.current);
+    }, 3000);
+  }, []);
+
   return (
     <>
       Count: {count}
       <button onClick={() => setCount(initialCount)}>Reset</button>
       <button onClick={() => setCount(prevCount => prevCount - 1)}>-</button>
-      <button onClick={() => setCount(prevCount => prevCount + 1)}>+</button>
+      <button
+        onClick={() => {
+          countRef.current = count + 1;
+          setCount(count + 1);
+        }}
+      >
+        +
+      </button>
+      <button onClick={handleAlertClick}>
+        3s后显示的是3s前事件触发时的count ：Capture Value
+      </button>
+      <button onClick={handleAlertClick2}>
+        3s后显示的是当前最新的count ：useRef
+      </button>
     </>
   );
 }
@@ -1398,7 +1457,9 @@ function App() {
           <a
             href="https://www.runoob.com/react/react-component-life-cycle.html"
             target="_blank"
-          >React 组件生命周期</a>
+          >
+            React 组件生命周期
+          </a>
         </p>
         <ButtonLifeCycle />
         <h1 className="step-title">State & 生命周期 ：</h1>
@@ -1428,6 +1489,8 @@ function App() {
         <Table items={items} />
         <h1 className="step-title">无障碍 ：使用程序管理焦点</h1>
         <CustomTextInput />
+        <h2>Hook: useRef</h2>
+        <TextInputWithFocusButton />
         <h1 className="step-title">
           无障碍
           ：外部点击模式，用户可以通过点击元素以外的地方来关闭已打开的弹出框。
