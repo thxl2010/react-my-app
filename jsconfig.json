@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "components/*": ["src/components/*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "build",
+    "public",
+    "dist",
+    "mock",
+    "uploads",
+    "server",
+    "static"
+  ],
+  "include": [
+    "config/**/*",
+    "src/**/*"
+  ]
+}
