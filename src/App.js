@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import Home from './views/Home';
 import About from './views/About';
 import Demo from './views/Demos';
-// import Todo from './views/Todo';
+import Todo from './views/Todo';
 
 function App() {
   return (
@@ -45,8 +45,7 @@ function App() {
               <Demo />
             </Route>
             <Route path="/todo">
-              {/* <Todo /> */}
-              <About />
+              <Todo />
             </Route>
           </Switch>
         </div>
