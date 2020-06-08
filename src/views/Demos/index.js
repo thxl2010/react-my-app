@@ -8,6 +8,7 @@ import React, {
   useContext,
 } from 'react'; // Hook
 import ReactDOM from 'react-dom';
+import axios from 'axios';
 import './index.css';
 import Chosen from '@/components/Chosen';
 import logo from '../../logo.svg';
@@ -1419,6 +1420,142 @@ function FriendListItem(props) {
 }
 
 /**
+ *
+ */
+function FetchData() {
+  const [data, setData] = useState({ hits: [] });
+
+  // We only want to fetch data when the component mounts.
+  // That's why you can provide an empty array as second argument
+  // to the effect hook to avoid activating it on component update
+  // but only for the mounting of the component.
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios(
+        'https://hn.algolia.com/api/v1/search?query=redux'
+      );
+
+      setData(result.data);
+    };
+
+    fetchData();
+  }, []);
+
+  return (
+    <>
+      <ul>
+        {data.hits.map(item => (
+          <li key={item.objectID}>
+            <a href={item.url}>{item.title}</a>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+function FetchDataChange() {
+  const [data, setData] = useState({ hits: [] });
+  const [query, setQuery] = useState('redux');
+  const [search, setSearch] = useState('redux');
+
+  // now the effect should depend on the query. Once the query changes, the data request should fire again.
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios(
+        `http://hn.algolia.com/api/v1/search?query=${query}`
+      );
+
+      setData(result.data);
+    };
+
+    fetchData();
+  }, [search]);
+
+  return (
+    <>
+      <input
+        type="text"
+        value={query}
+        onChange={event => setQuery(event.target.value)}
+      />
+      <button type="button" onClick={() => setSearch(query)}>
+        Search
+      </button>
+      <ul>
+        {data.hits.map(item => (
+          <li key={item.objectID}>
+            <a href={item.url}>{item.title}</a>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+function FetchDataChangeSetUrl() {
+  const [data, setData] = useState({ hits: [] });
+  const [query, setQuery] = useState('redux');
+  const [url, setUrl] = useState(
+    'https://hn.algolia.com/api/v1/search?query=redux'
+  );
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsError(false);
+      setIsLoading(true);
+
+      try {
+        const result = await axios(url);
+
+        setData(result.data);
+      } catch (error) {
+        setIsError(true);
+      }
+
+      setIsLoading(false);
+    };
+
+    fetchData();
+  }, [url]);
+
+  return (
+    <>
+      <input
+        type="text"
+        value={query}
+        onChange={event => setQuery(event.target.value)}
+      />
+      <button
+        type="button"
+        onClick={() =>
+          setUrl(`http://hn.algolia.com/api/v1/search?query=${query}`)
+        }
+      >
+        Search
+      </button>
+
+      {isError && <div>Something went wrong ...</div>}
+
+      {isLoading ? (
+        <div>Loading ...</div>
+      ) : (
+        <ul>
+          {data.hits.map(item => (
+            <li key={item.objectID}>
+              <a href={item.url}>{item.title}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
+
+/**
  * =============================================================================
  * App
  * =============================================================================
@@ -1550,6 +1687,12 @@ function Demos() {
         </h2>
         <HookExample />
         <Counter initialCount={10} />
+        <h2>Hook： 》》》 fetch data</h2>
+        <FetchData />
+        <h2>Hook： 》》》 fetch data when click</h2>
+        <FetchDataChange />
+        <h2>Hook： 》》》 fetch data when click to setUrl</h2>
+        <FetchDataChangeSetUrl />
       </section>
     </div>
   );
