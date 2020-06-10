@@ -1,8 +1,10 @@
 import Chosen from '@/components/Chosen';
 import useHackerNewsApi from '@/components/Hooks/useHackerNewsApi';
+import useDataApi from '@/components/Hooks/useDataApi';
 import { Button } from 'antd';
 import axios from 'axios';
 import React, {
+  Fragment,
   useCallback,
   useContext,
   useEffect,
@@ -1668,6 +1670,51 @@ function FetchDataWithMyHook() {
   );
 }
 
+function FetchDataWithMyApiHook() {
+  const api = 'https://hn.algolia.com/api/v1/search';
+  const initQuery = 'vue@3';
+  const [query, setQuery] = useState(initQuery);
+  const [
+    { data, isLoading, isError },
+    doFetch,
+  ] = useDataApi(`${api}?query=${initQuery}`, {
+    hits: [],
+  });
+
+  return (
+    <Fragment>
+      <form
+        onSubmit={event => {
+          doFetch(`${api}?query=${query}`);
+
+          event.preventDefault();
+        }}
+      >
+        <input
+          type="text"
+          value={query}
+          onChange={event => setQuery(event.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      {isError && <div>Something went wrong ...</div>}
+
+      {isLoading ? (
+        <div>Loading ...</div>
+      ) : (
+        <ul>
+          {data.hits.map(item => (
+            <li key={item.objectID}>
+              <a href={item.url}>{item.title}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Fragment>
+  );
+}
+
 /**
  * =============================================================================
  * App
@@ -1812,6 +1859,7 @@ function Demos() {
 
         <h2>Hook： 》》》 fetch data with custom hook</h2>
         <FetchDataWithMyHook />
+        <FetchDataWithMyApiHook />
       </section>
     </div>
   );
