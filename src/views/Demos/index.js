@@ -1,6 +1,7 @@
 import Chosen from '@/components/Chosen';
 import useHackerNewsApi from '@/components/Hooks/useHackerNewsApi';
 import useDataApi from '@/components/Hooks/useDataApi';
+import useDataApiWithReducer from '@/components/Hooks/useDataApiWithReducer';
 import { Button } from 'antd';
 import axios from 'axios';
 import React, {
@@ -1517,8 +1518,8 @@ function FetchData() {
 
 function FetchDataChange() {
   const [data, setData] = useState({ hits: [] });
-  const [query, setQuery] = useState('redux');
-  const [search, setSearch] = useState('redux');
+  const [query, setQuery] = useState('react-redux');
+  const [search, setSearch] = useState('react-redux');
 
   // now the effect should depend on the query. Once the query changes, the data request should fire again.
   useEffect(() => {
@@ -1556,9 +1557,9 @@ function FetchDataChange() {
 
 function FetchDataChangeSetUrl() {
   const [data, setData] = useState({ hits: [] });
-  const [query, setQuery] = useState('redux');
+  const [query, setQuery] = useState('react');
   const [url, setUrl] = useState(
-    'https://hn.algolia.com/api/v1/search?query=redux'
+    'https://hn.algolia.com/api/v1/search?query=react'
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -1619,8 +1620,8 @@ function FetchDataChangeSetUrl() {
 function FetchDataForm() {
   const api = 'https://hn.algolia.com/api/v1/search';
   const [data, setData] = useState({ hits: [] });
-  const [query, setQuery] = useState('redux');
-  const [url, setUrl] = useState(`${api}?query=redux`);
+  const [query, setQuery] = useState('useState');
+  const [url, setUrl] = useState(`${api}?query=useState`);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -1678,7 +1679,7 @@ function FetchDataForm() {
 }
 
 function FetchDataWithMyHook() {
-  const [query, setQuery] = useState('node.js');
+  const [query, setQuery] = useState('hooks-custom');
   const [{ data, isLoading, isError }, doFetch] = useHackerNewsApi();
 
   return (
@@ -1716,12 +1717,57 @@ function FetchDataWithMyHook() {
 
 function FetchDataWithMyApiHook() {
   const api = 'https://hn.algolia.com/api/v1/search';
-  const initQuery = 'vue@3';
+  const initQuery = 'react@17';
   const [query, setQuery] = useState(initQuery);
   const [
     { data, isLoading, isError },
     doFetch,
   ] = useDataApi(`${api}?query=${initQuery}`, {
+    hits: [],
+  });
+
+  return (
+    <Fragment>
+      <form
+        onSubmit={event => {
+          doFetch(`${api}?query=${query}`);
+
+          event.preventDefault();
+        }}
+      >
+        <input
+          type="text"
+          value={query}
+          onChange={event => setQuery(event.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      {isError && <div>Something went wrong ...</div>}
+
+      {isLoading ? (
+        <div>Loading ...</div>
+      ) : (
+        <ul>
+          {data.hits.map(item => (
+            <li key={item.objectID}>
+              <a href={item.url}>{item.title}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Fragment>
+  );
+}
+
+function FetchDataWithMyApiHookOfReducer() {
+  const api = 'https://hn.algolia.com/api/v1/search';
+  const initQuery = 'useReducer';
+  const [query, setQuery] = useState(initQuery);
+  const [
+    { data, isLoading, isError },
+    doFetch,
+  ] = useDataApiWithReducer(`${api}?query=${initQuery}`, {
     hits: [],
   });
 
@@ -1907,6 +1953,8 @@ function Demos() {
         <h2>Hook： 》》》 fetch data with custom hook</h2>
         <FetchDataWithMyHook />
         <FetchDataWithMyApiHook />
+        <h2>Hook： 》》》 fetch data with custom hook: useReducer</h2>
+        <FetchDataWithMyApiHookOfReducer />
       </section>
     </div>
   );
