@@ -8,6 +8,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useReducer,
   useRef,
   useState,
 } from 'react'; // Hook
@@ -1408,6 +1409,49 @@ function Counter({ initialCount }) {
 }
 
 /**
+ * ! [useReducer](https://zh-hans.reactjs.org/docs/hooks-reference.html#usereducer)
+ */
+const counterReducer = (state, action) => {
+  switch (action.type) {
+    case 'INCREASE':
+      return { ...state, count: state.count + 1 };
+    case 'DECREASE':
+      return { ...state, count: state.count - 1 };
+    default:
+      throw new Error();
+  }
+};
+
+const CounterWithReducer = () => {
+  const [state, dispatch] = useReducer(counterReducer, { count: 0 });
+
+  const handleIncrease = () => {
+    dispatch({ type: 'INCREASE' });
+  };
+
+  const handleDecrease = () => {
+    dispatch({ type: 'DECREASE' });
+  };
+
+  return (
+    <div>
+      <h1>Counter with useReducer</h1>
+      <p>Count: {state.count}</p>
+
+      <div>
+        <button type="button" onClick={handleIncrease}>
+          +
+        </button>
+        <button type="button" onClick={handleDecrease}>
+          -
+        </button>
+      </div>
+    </div>
+  );
+};
+
+
+/**
  * 自定义Hook
  */
 function useFriendStatus(friendID) {
@@ -1847,6 +1891,9 @@ function Demos() {
         </h2>
         <HookExample />
         <Counter initialCount={10} />
+
+        <h2>Hook： 》》》 useReducer </h2>
+        <CounterWithReducer />
 
         <h2>Hook： 》》》 fetch data</h2>
         <FetchData />
