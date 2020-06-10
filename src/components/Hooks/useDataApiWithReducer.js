@@ -37,19 +37,32 @@ const useDataApiWithReducer = (initialUrl, initialData) => {
   });
 
   useEffect(() => {
+    let didCancel = false;
+
     const fetchData = async () => {
       dispatch({ type: 'FETCH_INIT' });
 
       try {
         const result = await axios(url);
 
-        dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+        if (!didCancel) {
+          dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+        }
       } catch (error) {
-        dispatch({ type: 'FETCH_FAILURE' });
+        if (!didCancel) {
+          console.error('FETCH_FAILURE error :', error);
+          dispatch({ type: 'FETCH_FAILURE' });
+        }
       }
     };
 
     fetchData();
+
+    // ! 如果你的 effect 返回一个函数，React 将会在执行清除操作时调用它：
+    // ! [需要清除的 effect](https://zh-hans.reactjs.org/docs/hooks-effect.html#%E9%9C%80%E8%A6%81%E6%B8%85%E9%99%A4%E7%9A%84-effect)
+    return () => {
+      didCancel = true;
+    };
   }, [url]);
 
   return [state, setUrl];

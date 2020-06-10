@@ -1366,11 +1366,18 @@ function Counter({ initialCount }) {
   // 可以认为每次 Render 的内容都会形成一个快照并保留下来，因此当状态变更而 Rerender 时，就形成了 N 个 Render 状态，
   // 而每个 Render 状态都拥有自己固定不变的 Props 与 State。
 
-  // useEffect 在实际 DOM 渲染完毕后执行
+  // [useEffect](https://zh-hans.reactjs.org/docs/hooks-effect.html)
+  // useEffect 在实际 DOM 渲染完毕后执行：默认情况下，它在第一次渲染之后和每次更新之后都会执行
+  // ! 如果你的 effect 返回一个函数，React 将会在执行清除操作时调用它：
   useEffect(() => {
     setTimeout(() => {
       console.log('useEffect count: ' + count);
     }, 3000);
+
+    // ! [需要清除的 effect](https://zh-hans.reactjs.org/docs/hooks-effect.html#%E9%9C%80%E8%A6%81%E6%B8%85%E9%99%A4%E7%9A%84-effect)
+    return function cleanup() {
+      console.log('如果你的 effect 返回一个函数，React 将会在执行清除操作时调用它');
+    };
   }, [count]);
 
   const handleAlertClick = useCallback(() => {
