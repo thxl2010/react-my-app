@@ -1,17 +1,17 @@
+import Chosen from '@/components/Chosen';
+import useHackerNewsApi from '@/components/Hooks/useHackerNewsApi';
 import { Button } from 'antd';
-// import React from 'react';
+import axios from 'axios';
 import React, {
-  useState,
   useCallback,
+  useContext,
   useEffect,
   useRef,
-  useContext,
+  useState,
 } from 'react'; // Hook
 import ReactDOM from 'react-dom';
-import axios from 'axios';
-import './index.css';
-import Chosen from '@/components/Chosen';
 import logo from '../../logo.svg';
+import './index.css';
 
 /**
  * 函数组件
@@ -86,27 +86,42 @@ class ButtonLifeCycle extends React.Component {
   }
 }
 
+/**
+ * Rename componentWillMount to UNSAFE_componentWillMount to suppress this warning in non-strict mode.
+ * In React 17.x, only the UNSAFE_ name will work. To rename all deprecated lifecycles to their new names,
+ * you can run npx react-codemod rename-unsafe-lifecycles in your project source folder.
+ *
+ * React16新的生命周期弃用了componentWillMount、componentWillReceiveProps，componentWillUpdate
+ * 新增了getDerivedStateFromProps、getSnapshotBeforeUpdate来代替弃用的三个钩子函数（componentWillMount、componentWillReceivePorps，componentWillUpdate）
+ * React16并没有删除这三个钩子函数，但是不能和新增的钩子函数（getDerivedStateFromProps、getSnapshotBeforeUpdate）混用，
+ * React17将会删除componentWillMount、componentWillReceiveProps，componentWillUpdate
+ * 新增了对错误的处理（componentDidCatch）
+ */
 class ContentLifeCycle extends React.Component {
   componentWillMount() {
-    console.log('生命周期：Component WILL MOUNT!');
+    console.log('生命周期：componentWillMount  初始化数据，渲染前');
   }
   componentDidMount() {
-    console.log('生命周期：Component DID MOUNT!');
+    console.log('生命周期：componentDidMount  DOM挂载后，已经渲染了');
   }
   componentWillReceiveProps(newProps) {
-    console.log('生命周期：Component WILL RECEIVE PROPS!');
+    console.log('生命周期：componentWillReceiveProps  组件收到新的props');
   }
   shouldComponentUpdate(newProps, newState) {
+    console.log(
+      '组件发生了更新，组件是否更新：shouldComponentUpdate：',
+      newState
+    );
     return true;
   }
   componentWillUpdate(nextProps, nextState) {
-    console.log('生命周期：Component WILL UPDATE!');
+    console.log('生命周期：componentWillUpdate  组件开始更新');
   }
   componentDidUpdate(prevProps, prevState) {
-    console.log('生命周期：Component DID UPDATE!');
+    console.log('生命周期：componentDidUpdate  组件完成更新');
   }
   componentWillUnmount() {
-    console.log('生命周期：Component WILL UNMOUNT!');
+    console.log('生命周期：componentWillUnmount  组件被卸载');
   }
 
   render() {
@@ -1420,7 +1435,7 @@ function FriendListItem(props) {
 }
 
 /**
- *
+ * ! https://www.robinwieruch.de/react-hooks-fetch-data
  */
 function FetchData() {
   const [data, setData] = useState({ hits: [] });
@@ -1537,6 +1552,104 @@ function FetchDataChangeSetUrl() {
       >
         Search
       </button>
+
+      {isError && <div>Something went wrong ...</div>}
+
+      {isLoading ? (
+        <div>Loading ...</div>
+      ) : (
+        <ul>
+          {data.hits.map(item => (
+            <li key={item.objectID}>
+              <a href={item.url}>{item.title}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
+
+function FetchDataForm() {
+  const api = 'https://hn.algolia.com/api/v1/search';
+  const [data, setData] = useState({ hits: [] });
+  const [query, setQuery] = useState('redux');
+  const [url, setUrl] = useState(`${api}?query=redux`);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsError(false);
+      setIsLoading(true);
+
+      try {
+        const result = await axios(url);
+
+        setData(result.data);
+      } catch (error) {
+        setIsError(true);
+      }
+
+      setIsLoading(false);
+    };
+
+    fetchData();
+  }, [url]);
+
+  return (
+    <>
+      <form
+        onSubmit={event => {
+          event.preventDefault();
+          setUrl(`${api}?query=${query}`);
+        }}
+      >
+        <input
+          type="text"
+          value={query}
+          onChange={event => setQuery(event.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      {isError && <div>Something went wrong ...</div>}
+
+      {isLoading ? (
+        <div>Loading ...</div>
+      ) : (
+        <ul>
+          {data.hits.map(item => (
+            <li key={item.objectID}>
+              <a href={item.url}>{item.title}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
+
+function FetchDataWithMyHook() {
+  const [query, setQuery] = useState('node.js');
+  const [{ data, isLoading, isError }, doFetch] = useHackerNewsApi();
+
+  return (
+    <>
+      <form
+        onSubmit={event => {
+          event.preventDefault();
+          doFetch(`http://hn.algolia.com/api/v1/search?query=${query}`);
+        }}
+      >
+        <input
+          type="text"
+          value={query}
+          onChange={event => setQuery(event.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
 
       {isError && <div>Something went wrong ...</div>}
 
@@ -1687,12 +1800,18 @@ function Demos() {
         </h2>
         <HookExample />
         <Counter initialCount={10} />
+
         <h2>Hook： 》》》 fetch data</h2>
         <FetchData />
         <h2>Hook： 》》》 fetch data when click</h2>
         <FetchDataChange />
         <h2>Hook： 》》》 fetch data when click to setUrl</h2>
         <FetchDataChangeSetUrl />
+        <h2>Hook： 》》》 fetch data with form</h2>
+        <FetchDataForm />
+
+        <h2>Hook： 》》》 fetch data with custom hook</h2>
+        <FetchDataWithMyHook />
       </section>
     </div>
   );

@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2020",
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
       "components/*": ["src/components/*"]
-    }
+    },
+    "experimentalDecorators": true
   },
   "exclude": [
     "node_modules",
