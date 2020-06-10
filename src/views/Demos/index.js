@@ -1377,7 +1377,9 @@ function Counter({ initialCount }) {
 
     // ! [需要清除的 effect](https://zh-hans.reactjs.org/docs/hooks-effect.html#%E9%9C%80%E8%A6%81%E6%B8%85%E9%99%A4%E7%9A%84-effect)
     return function cleanup() {
-      console.log('如果你的 effect 返回一个函数，React 将会在执行清除操作时调用它');
+      console.log(
+        '如果你的 effect 返回一个函数，React 将会在执行清除操作时调用它'
+      );
     };
   }, [count]);
 
@@ -1458,7 +1460,6 @@ const CounterWithReducer = () => {
     </div>
   );
 };
-
 
 /**
  * 自定义Hook
@@ -1727,12 +1728,12 @@ function FetchDataWithMyApiHook() {
   const api = 'https://hn.algolia.com/api/v1/search';
   const initQuery = 'react@17';
   const [query, setQuery] = useState(initQuery);
-  const [
-    { data, isLoading, isError },
-    doFetch,
-  ] = useDataApi(`${api}?query=${initQuery}`, {
-    hits: [],
-  });
+  const [{ data, isLoading, isError }, doFetch] = useDataApi(
+    `${api}?query=${initQuery}`,
+    {
+      hits: [],
+    }
+  );
 
   return (
     <Fragment>
@@ -1772,12 +1773,12 @@ function FetchDataWithMyApiHookOfReducer() {
   const api = 'https://hn.algolia.com/api/v1/search';
   const initQuery = 'useReducer';
   const [query, setQuery] = useState(initQuery);
-  const [
-    { data, isLoading, isError },
-    doFetch,
-  ] = useDataApiWithReducer(`${api}?query=${initQuery}`, {
-    hits: [],
-  });
+  const [{ data, isLoading, isError }, doFetch] = useDataApiWithReducer(
+    `${api}?query=${initQuery}`,
+    {
+      hits: [],
+    }
+  );
 
   return (
     <Fragment>
