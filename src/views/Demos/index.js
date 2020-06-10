@@ -2,6 +2,7 @@ import Chosen from '@/components/Chosen';
 import useHackerNewsApi from '@/components/Hooks/useHackerNewsApi';
 import useDataApi from '@/components/Hooks/useDataApi';
 import useDataApiWithReducer from '@/components/Hooks/useDataApiWithReducer';
+import Slider from '@/components/Slider';
 import { Button } from 'antd';
 import axios from 'axios';
 import React, {
@@ -1962,6 +1963,9 @@ function Demos() {
         <FetchDataWithMyApiHook />
         <h2>Hook： 》》》 fetch data with custom hook: useReducer</h2>
         <FetchDataWithMyApiHookOfReducer />
+
+        <h2>Hook： 》》》 Slider</h2>
+        <Slider />
       </section>
     </div>
   );
