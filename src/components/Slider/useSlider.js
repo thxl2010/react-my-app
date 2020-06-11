@@ -66,8 +66,7 @@ const reducer = (state, action) => {
 };
 
 const useSlider = props => {
-  const { horizon, initRatio = 0, refContainer } = props;
-  console.log('Slider props :', props);
+  const { horizon, initRatio = 0 } = props;
 
   const [state, dispatch] = useReducer(reducer, {
     horizon,
@@ -75,6 +74,7 @@ const useSlider = props => {
     reset: true,
   });
 
+  const refContainer = useRef(null);
   const hotAreaRef = useRef(null);
   const thumbRef = useRef(null);
 
@@ -138,6 +138,7 @@ const useSlider = props => {
   );
 
   return [
+    refContainer,
     {
       ref: hotAreaRef,
       onMouseDown: handleHotAreaMouseDown,

@@ -1,13 +1,11 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import useSlider from './useSlider';
 import './style.css';
 
 function Slider(props) {
-  const refContainer = useRef(null);
-  const [hotAreaProps, thumbProps, sliderState] = useSlider({
+  const [refContainer, hotAreaProps, thumbProps, sliderState] = useSlider({
     initRatio: 0.5,
     horizon: true,
-    refContainer,
   });
 
   const { ratio, reset, setRatio } = sliderState;
