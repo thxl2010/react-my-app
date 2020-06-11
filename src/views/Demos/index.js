@@ -1965,7 +1965,19 @@ function Demos() {
         <h2>Hook： 》》》 fetch data with custom hook: useReducer</h2>
         <FetchDataWithMyApiHookOfReducer />
 
-        <h2>Hook： 》》》 Slider</h2>
+        <h2>
+          Hook： 》》》 Slider:
+          <a
+            hrdf="https://zh-hans.reactjs.org/blog/2020/05/22/react-hooks.html"
+            target="_blank"
+          >
+            React Hook 最佳实践
+          </a>
+          &nbsp;
+          <a href="https://github.com/x-orpheus" target="_blank">
+            __网易云音乐前端团队
+          </a>
+        </h2>
         <Slider />
       </section>
     </div>

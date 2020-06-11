@@ -66,7 +66,8 @@ const reducer = (state, action) => {
 };
 
 const useSlider = props => {
-  const { horizon, initRatio = 0 } = props;
+  const { horizon, initRatio = 0, refContainer } = props;
+  console.log('Slider props :', props);
 
   const [state, dispatch] = useReducer(reducer, {
     horizon,
@@ -114,12 +115,16 @@ const useSlider = props => {
         y: ev.pageY,
       });
     };
-    document.addEventListener('mousemove', onSliding);
-    document.addEventListener('mouseup', onSlideEnd);
 
+    const slider = refContainer.current;
+    slider.addEventListener('mousemove', onSliding);
+    slider.addEventListener('mouseup', onSlideEnd);
+
+    // ! 如果你的 effect 返回一个函数，React 将会在执行清除操作时调用它：
+    // ! [需要清除的 effect](https://zh-hans.reactjs.org/docs/hooks-effect.html#%E9%9C%80%E8%A6%81%E6%B8%85%E9%99%A4%E7%9A%84-effect)
     return () => {
-      document.removeEventListener('mousemove', onSliding);
-      document.removeEventListener('mouseup', onSlideEnd);
+      slider.removeEventListener('mousemove', onSliding);
+      slider.removeEventListener('mouseup', onSlideEnd);
     };
   }, []);
 
