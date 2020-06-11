@@ -3,7 +3,7 @@ import useSlider from './useSlider';
 import './style.css';
 
 function Slider(props) {
-  const [refContainer, hotAreaProps, thumbProps, sliderState] = useSlider({
+  const [containerProps, hotAreaProps, thumbProps, sliderState] = useSlider({
     initRatio: 0.5,
     horizon: true,
   });
@@ -20,7 +20,7 @@ function Slider(props) {
       <button onClick={() => setRatio(0.5)}>0.5</button>
       <button onClick={() => setRatio(1)}>1</button>
       <div className="val">{ratio}</div>
-      <div className="slider" ref={refContainer}>
+      <div className="slider" {...containerProps}>
         <div className="track" {...hotAreaProps} />
         <div className="has" style={{ width: `${ratio * 100}%` }}>
           <div className="ctrl" {...thumbProps} />

@@ -74,7 +74,7 @@ const useSlider = props => {
     reset: true,
   });
 
-  const refContainer = useRef(null);
+  const containerRef = useRef(null);
   const hotAreaRef = useRef(null);
   const thumbRef = useRef(null);
 
@@ -116,7 +116,7 @@ const useSlider = props => {
       });
     };
 
-    const slider = refContainer.current;
+    const slider = containerRef.current;
     slider.addEventListener('mousemove', onSliding);
     slider.addEventListener('mouseup', onSlideEnd);
 
@@ -138,7 +138,9 @@ const useSlider = props => {
   );
 
   return [
-    refContainer,
+    {
+      ref: containerRef,
+    },
     {
       ref: hotAreaRef,
       onMouseDown: handleHotAreaMouseDown,
