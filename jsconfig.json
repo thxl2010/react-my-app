@@ -4,8 +4,7 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"],
-      "components/*": ["src/components/*"]
+      "@/*": ["src/*"]
     },
     "experimentalDecorators": true
   },
@@ -16,11 +15,11 @@
     "dist",
     "mock",
     "uploads",
+    "config",
     "server",
     "static"
   ],
   "include": [
-    "config/**/*",
     "src/**/*"
   ]
 }
