@@ -121,12 +121,22 @@ module.exports = function (webpackEnv) {
             sourceMap: isEnvProduction && shouldUseSourceMap,
           },
         },
-        {
-          loader: require.resolve(preProcessor),
-          options: {
-            sourceMap: true,
-          },
-        }
+        preProcessor === 'less-loader'
+          ? {
+              loader: require.resolve(preProcessor),
+              options: {
+                lessOptions: {
+                  javascriptEnabled: true,
+                },
+                sourceMap: true,
+              },
+            }
+          : {
+              loader: require.resolve(preProcessor),
+              options: {
+                sourceMap: true,
+              },
+            }
       );
     }
     return loaders;
