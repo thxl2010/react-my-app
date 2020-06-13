@@ -1,9 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import Home from './views/Home';
+import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom';
 import About from './views/About';
 import Demo from './views/Demos';
+import Home from './views/Home';
 import Todo from './views/Todo';
+import Study from './views/Study';
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
             </li>
             <li>
               <Link to="/todo">Todo List</Link>
+            </li>
+            <li>
+              <Link to="/study">The Road to learn React</Link>
             </li>
           </ul>
         </aside>
@@ -46,6 +50,9 @@ function App() {
             </Route>
             <Route path="/todo">
               <Todo />
+            </Route>
+            <Route path="/study">
+              <Study />
             </Route>
           </Switch>
         </div>
