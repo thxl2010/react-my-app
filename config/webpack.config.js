@@ -126,6 +126,7 @@ module.exports = function (webpackEnv) {
               loader: require.resolve(preProcessor),
               options: {
                 lessOptions: {
+                  modifyVars: require('./ant.theme.json'),
                   javascriptEnabled: true,
                 },
                 sourceMap: true,
