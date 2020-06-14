@@ -9,7 +9,10 @@ class AddTodo extends React.Component {
   }
 
   componentDidMount() {
-    console.log('mapDispatchToProps is null , this.props.dispatch :', this.props.dispatch);
+    console.log(
+      'mapDispatchToProps is null , this.props.dispatch :',
+      this.props.dispatch
+    );
     console.log('this.props.addTodo :', this.props.addTodo);
   }
 

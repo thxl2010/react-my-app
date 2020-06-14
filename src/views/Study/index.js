@@ -75,15 +75,17 @@ const InputWithLabel = ({
       <label htmlFor={id}>{children}</label>
       &nbsp;
       {/* B */}
+      {/* eslint-disable */}
       <input
         className={style.input}
         ref={inputRef}
         id={id}
         type={type}
         value={value}
-        autoFocus={isFocused}
+        autoFocus="autofocus"
         onChange={onInputChange}
       />
+      {/* eslint-enable */}
     </>
   );
 };

@@ -942,7 +942,9 @@ class A extends React.Component {
     return (
       <div>
         <span>这是组件A自己的内容</span>
-        <h2 onClick={this.handleChange.bind(this)}>{this.props.data}</h2>
+        <h2 role="button" onClick={this.handleChange.bind(this)}>
+          {this.props.data}
+        </h2>
       </div>
     );
   }
@@ -1541,7 +1543,7 @@ function FetchDataChange() {
     };
 
     fetchData();
-  }, [search]);
+  }, [query, search]);
 
   return (
     <>
@@ -1968,7 +1970,7 @@ function Demos() {
         <h2>
           Hook： 》》》 Slider:
           <a
-            hrdf="https://zh-hans.reactjs.org/blog/2020/05/22/react-hooks.html"
+            href="https://zh-hans.reactjs.org/blog/2020/05/22/react-hooks.html"
             target="_blank"
           >
             React Hook 最佳实践

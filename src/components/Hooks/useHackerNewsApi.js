@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 const useHackerNewsApi = () => {
   const [data, setData] = useState({ hits: [] });
   const [url, setUrl] = useState(
-    'https://hn.algolia.com/api/v1/search?query=hooks-custom',
+    'https://hn.algolia.com/api/v1/search?query=hooks-custom'
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
