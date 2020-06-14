@@ -1,20 +1,35 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button } from 'antd';
 import style from './style.module.less';
 
-const List = ({ list }) =>
-  list.map(({ objectID, ...item }) => <Item key={objectID} {...item} />);
+// const List = ({ list }) =>
+//   list.map(({ objectID, ...item }) => <Item key={objectID} {...item} />);
 
-const Item = ({ title, url, author, num_comments, points }) => (
-  <div>
-    <span>
-      <a href={url}>{title}</a>
-    </span>
+const List = ({ list, onRemoveItem }) =>
+  list.map(item => (
+    <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
+  ));
 
-    <span>{author}</span>
-    <span>{num_comments}</span>
-    <span>{points}</span>
-  </div>
-);
+const Item = ({ item, onRemoveItem }) => {
+  function handleRemoveItem() {
+    onRemoveItem(item);
+  }
+
+  return (
+    <div>
+      <span>
+        <a href={item.url}>{item.title}</a>
+      </span>
+
+      <span>{item.author}</span>
+      <span>{item.num_comments}</span>
+      <span>{item.points}</span>
+      <Button type="primary" size="small" danger onClick={handleRemoveItem}>
+        remove
+      </Button>
+    </div>
+  );
+};
 
 // const Search = props => {
 //   const { search, onSearch } = props;
@@ -65,7 +80,8 @@ const InputWithLabel = ({
   );
 };
 
-const stories = [
+// const stories = [
+const initialStories = [
   {
     title: 'React',
     url: 'https://reactjs.org/',
@@ -109,7 +125,7 @@ const Study = () => {
     setSearchTerm(event.target.value);
   };
 
-  const searchedStories = stories.filter(story =>
+  const searchedStories = initialStories.filter(story =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -142,6 +158,7 @@ const useSemiPersistentState = (key, initialState) => {
 
 const StudyWithCustomHook = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'react');
+  const [stories, setStories] = useState(initialStories);
 
   const handleSearch = event => {
     setSearchTerm(event.target.value);
@@ -150,6 +167,13 @@ const StudyWithCustomHook = () => {
   const searchedStories = stories.filter(story =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  function handleRemoveStory(item) {
+    console.log('remove item :', item);
+    const newStories = stories.filter(ele => ele.objectID !== item.objectID);
+
+    setStories(newStories);
+  }
 
   return (
     <div>
@@ -164,7 +188,7 @@ const StudyWithCustomHook = () => {
         <strong>Search:</strong>
       </InputWithLabel>
       <hr />
-      <List list={searchedStories} />
+      <List list={searchedStories} onRemoveItem={handleRemoveStory} />
     </div>
   );
 };
