@@ -24,7 +24,15 @@ const Item = ({ item, onRemoveItem }) => {
       <span>{item.author}</span>
       <span>{item.num_comments}</span>
       <span>{item.points}</span>
-      <Button type="primary" size="small" danger onClick={handleRemoveItem}>
+      {/* ! inline handlers */}
+      <Button
+        type="primary"
+        size="small"
+        danger
+        /* onClick={handleRemoveItem} */
+        /* onClick={onRemoveItem.bind(null, item)} */
+        onClick={() => onRemoveItem(item)}
+      >
         remove
       </Button>
     </div>
