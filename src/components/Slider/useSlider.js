@@ -2,6 +2,9 @@ import { useReducer, useRef, useCallback, useEffect } from 'react';
 
 const fixRatio = ratio => Math.max(0, Math.min(1, ratio));
 
+// ! 1. a reducer function outside of the components:
+// A reducer function always receives state and action .
+// Based on these two arguments, a reducer always returns a new state:
 const reducer = (state, action) => {
   const { horizon } = state;
   switch (action.type) {
@@ -68,6 +71,10 @@ const reducer = (state, action) => {
 const useSlider = props => {
   const { horizon, initRatio = 0 } = props;
 
+  // ! 2. The hook  useReducer
+  // The hook  useReducer receives a reducer function and an initial state as arguments
+  // and returns an array with two items.
+  // The first item is the current state; the second item is the state updater function (also called dispatch function):
   const [state, dispatch] = useReducer(reducer, {
     horizon,
     ratio: initRatio,
@@ -102,6 +109,9 @@ const useSlider = props => {
 
   useEffect(() => {
     const onSliding = ev => {
+      // ! 3. the useReducer state updater function
+      // dispatches an action for the reducer.
+      // The action comes with a type and an optional option:
       dispatch({
         type: 'move',
         x: ev.pageX,

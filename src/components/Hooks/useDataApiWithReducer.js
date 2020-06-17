@@ -1,6 +1,9 @@
 import React, { Fragment, useState, useEffect, useReducer } from 'react';
 import axios from 'axios';
 
+// ! 1. a reducer function outside of the components:
+// A reducer function always receives state and action .
+// Based on these two arguments, a reducer always returns a new state:
 const dataFetchReducer = (state, action) => {
   switch (action.type) {
     case 'FETCH_INIT':
@@ -30,6 +33,10 @@ const dataFetchReducer = (state, action) => {
 const useDataApiWithReducer = (initialUrl, initialData) => {
   const [url, setUrl] = useState(initialUrl);
 
+  // ! 2. The hook  useReducer
+  // The hook  useReducer receives a reducer function and an initial state as arguments
+  // and returns an array with two items.
+  // The first item is the current state; the second item is the state updater function (also called dispatch function):
   const [state, dispatch] = useReducer(dataFetchReducer, {
     isLoading: false,
     isError: false,
@@ -40,6 +47,9 @@ const useDataApiWithReducer = (initialUrl, initialData) => {
     let didCancel = false;
 
     const fetchData = async () => {
+      // ! 3. the useReducer state updater function
+      // dispatches an action for the reducer.
+      // The action comes with a type and an optional payload:
       dispatch({ type: 'FETCH_INIT' });
 
       try {
