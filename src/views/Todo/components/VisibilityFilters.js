@@ -12,7 +12,7 @@ const VisibilityFilters = ({ activeFilter, setFilter }) => {
         return (
           <span
             role="button"
-            tabindex={i}
+            tabIndex={i}
             key={`visibility-filter-${currentFilter}`}
             className={cx(
               'filter',
