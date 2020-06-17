@@ -1,6 +1,7 @@
+import { Button } from 'antd';
 import React from 'react';
+import { InputWithLabel, List } from '../components';
 import { useSemiPersistentState } from '../components/Hooks/useSemiPersistentState';
-import { List, InputWithLabel } from '../components';
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -40,8 +41,10 @@ const storiesReducer = (state, action) => {
   }
 };
 
+// ! reference: [FetchDataWithMyApiHookOfReducer](src\views\Demos\index.js:1774)
 const StoryListWithReducer = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
+  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
 
   // ! 2. The hook  useReducer
   // The hook  useReducer receives a reducer function and an initial state as arguments
@@ -53,13 +56,34 @@ const StoryListWithReducer = () => {
     isError: false,
   });
 
-  React.useEffect(() => {
-    // ! 3. the useReducer state updater function
-    // dispatches an action for the reducer.
-    // The action comes with a type and an optional payload:
+  // React.useEffect(() => {
+  //   if (searchTerm === '') return;
+
+  //   // ! 3. the useReducer state updater function
+  //   // dispatches an action for the reducer.
+  //   // The action comes with a type and an optional payload:
+  //   dispatchStories({ type: 'STORIES_FETCH_INIT' });
+
+  //   fetch(`${API_ENDPOINT}${searchTerm}`)
+  //     .then(response => response.json())
+  //     .then(result => {
+  //       dispatchStories({
+  //         type: 'STORIES_FETCH_SUCCESS',
+  //         payload: result.hits,
+  //       });
+  //     })
+  //     .catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' }));
+  //   // }, []);
+  // }, [searchTerm]);
+
+  // ! useCallback
+  const handleFetchStories = React.useCallback(() => {
+    if (!searchTerm) return;
+
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
-    fetch(`${API_ENDPOINT}react`)
+    // fetch(`${API_ENDPOINT}${searchTerm}`)
+    fetch(url)
       .then(response => response.json())
       .then(result => {
         dispatchStories({
@@ -68,7 +92,12 @@ const StoryListWithReducer = () => {
         });
       })
       .catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' }));
-  }, []);
+    // }, [searchTerm]);
+  }, [searchTerm, url]);
+
+  React.useEffect(() => {
+    handleFetchStories();
+  }, [handleFetchStories]);
 
   const handleRemoveStory = item => {
     dispatchStories({
@@ -77,13 +106,23 @@ const StoryListWithReducer = () => {
     });
   };
 
-  const handleSearch = event => {
+  const handleInputChange = event => {
     setSearchTerm(event.target.value);
   };
 
-  const searchedStories = stories.data.filter(story =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleInputKeyDown = event => {
+    if (event.keyCode === 13) {
+      handleSearchSubmit();
+    }
+  };
+
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
+  };
+
+  // const searchedStories = stories.data.filter(story =>
+  //   story.title.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   return (
     <div>
@@ -101,10 +140,20 @@ const StoryListWithReducer = () => {
         id="search"
         value={searchTerm}
         isFocused
-        onInputChange={handleSearch}
+        onInputChange={handleInputChange}
+        onKeyDown={handleInputKeyDown}
       >
         <strong>Search:</strong>
       </InputWithLabel>
+
+      <Button
+        type="primary"
+        size="small"
+        disabled={!searchTerm}
+        onClick={handleSearchSubmit}
+      >
+        查询
+      </Button>
 
       <hr />
 
@@ -113,7 +162,11 @@ const StoryListWithReducer = () => {
       {stories.isLoading ? (
         <p>Loading ...</p>
       ) : (
-        <List list={searchedStories} onRemoveItem={handleRemoveStory} />
+        <>
+          {/* <List list={searchedStories} onRemoveItem={handleRemoveStory} /> */}
+          <h2>Data Re-Fetching in React : </h2>
+          <List list={stories.data} onRemoveItem={handleRemoveStory} />
+        </>
       )}
     </div>
   );

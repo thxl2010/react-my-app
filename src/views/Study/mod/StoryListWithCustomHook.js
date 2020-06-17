@@ -28,7 +28,7 @@ const StoryListWithCustomHook = () => {
       .catch(() => setIsError(true));
   }, []);
 
-  const handleSearch = event => {
+  const handleInputChange = event => {
     setSearchTerm(event.target.value);
   };
 
@@ -54,12 +54,12 @@ const StoryListWithCustomHook = () => {
           React Custom Hooks
         </a>
       </h1>
-      {/* <Search search={searchTerm} onSearch={handleSearch} /> */}
+      {/* <Search search={searchTerm} onSearch={handleInputChange} /> */}
       <InputWithLabel
         id="search"
         value={searchTerm}
         isFocused={true}
-        onInputChange={handleSearch}
+        onInputChange={handleInputChange}
       >
         <strong>Search:</strong>
       </InputWithLabel>

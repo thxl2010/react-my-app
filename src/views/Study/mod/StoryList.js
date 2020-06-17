@@ -25,7 +25,7 @@ const StoryList = () => {
     console.log('StoryList search useEffect : ', searchTerm);
   }, [searchTerm]);
 
-  const handleSearch = event => {
+  const handleInputChange = event => {
     setSearchTerm(event.target.value);
   };
 
@@ -46,7 +46,7 @@ const StoryList = () => {
           useEffect
         </a>
       </h1>
-      <Search search={searchTerm} onSearch={handleSearch} />
+      <Search search={searchTerm} onSearch={handleInputChange} />
       <hr />
       <List list={searchedStories} />
     </div>

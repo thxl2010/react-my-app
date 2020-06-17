@@ -21,9 +21,10 @@ export const Item = ({ item, onRemoveItem }) => {
         <a href={item.url}>{item.title}</a>
       </span>
 
-      <span>{item.author}</span>
-      <span>{item.num_comments}</span>
-      <span>{item.points}</span>
+      <span>by {item.author}.</span>
+      <span>comments: {item.num_comments}</span>
+      <span>points: {item.points}</span>
+      <span>at: {item.created_at}</span>
       {/* ! inline handlers */}
       <Button
         type="primary"
@@ -41,10 +42,16 @@ export const Item = ({ item, onRemoveItem }) => {
 
 // export const Search = props => {
 //   const { search, onSearch } = props;
-export const Search = ({ search, onSearch }) => (
+export const Search = ({ search, onSearch, onKeyDown }) => (
   <>
     <label htmlFor="search">Search: </label>
-    <input id="search" type="text" value={search} onChange={onSearch} />
+    <input
+      id="search"
+      type="text"
+      value={search}
+      onChange={onSearch}
+      onKeyDown={onKeyDown}
+    />
   </>
 );
 
@@ -57,6 +64,7 @@ export const InputWithLabel = ({
   type = 'text',
   isFocused,
   onInputChange,
+  onKeyDown,
   children,
 }) => {
   // A
@@ -83,6 +91,7 @@ export const InputWithLabel = ({
         value={value}
         autoFocus="autofocus"
         onChange={onInputChange}
+        onKeyDown={onKeyDown}
       />
       {/* eslint-enable */}
     </>
