@@ -1,7 +1,8 @@
 import { Button } from 'antd';
-import React from 'react';
+import React, { useCallback, useEffect, useState, useReducer } from 'react';
 import { InputWithLabel, List } from '../components';
 import { useSemiPersistentState } from '../components/Hooks/useSemiPersistentState';
+import styles from '../style.module.less';
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -44,19 +45,19 @@ const storiesReducer = (state, action) => {
 // ! reference: [FetchDataWithMyApiHookOfReducer](src\views\Demos\index.js:1774)
 const StoryListWithReducer = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
-  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
+  const [url, setUrl] = useState(`${API_ENDPOINT}${searchTerm}`);
 
   // ! 2. The hook  useReducer
   // The hook  useReducer receives a reducer function and an initial state as arguments
   // and returns an array with two items.
   // The first item is the current state; the second item is the state updater function (also called dispatch function):
-  const [stories, dispatchStories] = React.useReducer(storiesReducer, {
+  const [stories, dispatchStories] = useReducer(storiesReducer, {
     data: [],
     isLoading: false,
     isError: false,
   });
 
-  // React.useEffect(() => {
+  // useEffect(() => {
   //   if (searchTerm === '') return;
 
   //   // ! 3. the useReducer state updater function
@@ -77,7 +78,7 @@ const StoryListWithReducer = () => {
   // }, [searchTerm]);
 
   // ! useCallback
-  const handleFetchStories = React.useCallback(() => {
+  const handleFetchStories = useCallback(() => {
     if (!searchTerm) return;
 
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
@@ -95,16 +96,16 @@ const StoryListWithReducer = () => {
     // }, [searchTerm]);
   }, [searchTerm, url]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     handleFetchStories();
   }, [handleFetchStories]);
 
-  const handleRemoveStory = item => {
+  const handleRemoveStory = useCallback(item => {
     dispatchStories({
       type: 'REMOVE_STORY',
       payload: item,
     });
-  };
+  }, []);
 
   const handleInputChange = event => {
     setSearchTerm(event.target.value);
@@ -149,6 +150,7 @@ const StoryListWithReducer = () => {
       <Button
         type="primary"
         size="small"
+        className={styles.btnSearch}
         disabled={!searchTerm}
         onClick={handleSearchSubmit}
       >

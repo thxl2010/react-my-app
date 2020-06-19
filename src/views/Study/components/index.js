@@ -5,10 +5,16 @@ import styles from '../style.module.less';
 // export const List = ({ list }) =>
 //   list.map(({ objectID, ...item }) => <Item key={objectID} {...item} />);
 
-export const List = ({ list, onRemoveItem }) =>
-  list.map(item => (
-    <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
-  ));
+// [React.memo()](https://zh-hans.reactjs.org/docs/react-api.html#reactmemo)
+// 如果你的函数组件在给定相同 props 的情况下渲染相同的结果，那么你可以通过将其包装在 React.memo 中调用，以此通过记忆组件渲染结果的方式来提高组件的性能表现
+// 只适用于函数组件，而不适用 class 组件。
+export const List = React.memo(
+  ({ list, onRemoveItem }) =>
+    console.log('B:List') ||
+    list.map(item => (
+      <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
+    ))
+);
 
 export const Item = ({ item, onRemoveItem }) => {
   function handleRemoveItem() {
@@ -30,6 +36,7 @@ export const Item = ({ item, onRemoveItem }) => {
         type="primary"
         size="small"
         danger
+        style={{ marginLeft: '6px' }}
         /* onClick={handleRemoveItem} */
         /* onClick={onRemoveItem.bind(null, item)} */
         onClick={() => onRemoveItem(item)}
