@@ -105,7 +105,7 @@ const StoryListWithReducer = () => {
       })
       .catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' }));
     // }, [searchTerm]);
-  }, [searchTerm, url]);
+  }, [searchTerm, url]); // useEffect
 
   useEffect(() => {
     handleFetchStories();
