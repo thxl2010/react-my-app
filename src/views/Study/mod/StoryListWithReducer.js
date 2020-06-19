@@ -1,5 +1,11 @@
 import { Button } from 'antd';
-import React, { useCallback, useEffect, useState, useReducer } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useReducer,
+  useMemo,
+} from 'react';
 import { InputWithLabel, List } from '../components';
 import { useSemiPersistentState } from '../components/Hooks/useSemiPersistentState';
 import styles from '../style.module.less';
@@ -40,6 +46,11 @@ const storiesReducer = (state, action) => {
     default:
       throw new Error();
   }
+};
+
+const getSumComments = stories => {
+  console.log('C getSumComments');
+  return stories.data.reduce((result, value) => result + value.num_comments, 0);
 };
 
 // ! reference: [FetchDataWithMyApiHookOfReducer](src\views\Demos\index.js:1774)
@@ -125,6 +136,11 @@ const StoryListWithReducer = () => {
   //   story.title.toLowerCase().includes(searchTerm.toLowerCase())
   // );
 
+  // ! useMemo
+  // We can tell React to only run a function if one of its dependencies has changed.
+  // If no dependency changed, the result of the function stays the same.
+  const sumComments = useMemo(() => getSumComments(stories), [stories]);
+
   return (
     <div>
       <h1>
@@ -157,6 +173,8 @@ const StoryListWithReducer = () => {
         查询
       </Button>
 
+      <hr />
+      <p>My Hacker Stories with {sumComments} comments.</p>
       <hr />
 
       {stories.isError && <p>Something went wrong ...</p>}
