@@ -90,8 +90,6 @@ const StoryListWithReducer = () => {
 
   // ! useCallback
   const handleFetchStories = useCallback(() => {
-    if (!searchTerm) return;
-
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
     // fetch(`${API_ENDPOINT}${searchTerm}`)
@@ -104,8 +102,7 @@ const StoryListWithReducer = () => {
         });
       })
       .catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' }));
-    // }, [searchTerm]);
-  }, [searchTerm, url]); // useEffect
+  }, [url]); // useEffect
 
   useEffect(() => {
     handleFetchStories();
