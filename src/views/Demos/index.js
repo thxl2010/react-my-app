@@ -1835,6 +1835,17 @@ function FetchDataWithMyApiHookOfReducer() {
 
   return (
     <Fragment>
+      <h2>FetchDataWithMyApiHookOfReducer</h2>
+      <h2>
+        Here is a simple example of the difference that Immer could make in
+        practice. &nbsp;
+        <a
+          href="https://immerjs.github.io/immer/docs/example-reducer"
+          target="_blank"
+        >
+          Immer: Update Immutable State with React useReducer through Immer
+        </a>
+      </h2>
       <form
         onSubmit={event => {
           doFetch(`${api}?query=${query}`);

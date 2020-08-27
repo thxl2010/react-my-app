@@ -1,5 +1,6 @@
-import React, { Fragment, useState, useEffect, useReducer } from 'react';
 import axios from 'axios';
+import produce from 'immer';
+import { useEffect, useReducer, useState } from 'react';
 
 // ! 1. a reducer function outside of the components:
 // A reducer function always receives state and action .
@@ -30,6 +31,30 @@ const dataFetchReducer = (state, action) => {
   }
 };
 
+/**
+ * [Here is a simple example of the difference that Immer could make in practice.](https://immerjs.github.io/immer/docs/example-reducer)
+ */
+const dataFetchImmerReducer = produce((draft, action) => {
+  switch (action.type) {
+    case 'FETCH_INIT':
+      draft.isLoading = true;
+      draft.isError = false;
+      break;
+    case 'FETCH_SUCCESS':
+      draft.isLoading = false;
+      draft.isError = false;
+      draft.data = action.payload;
+      console.log('FETCH_SUCCESS draft :', draft);
+      break;
+    case 'FETCH_FAILURE':
+      draft.isLoading = false;
+      draft.isError = true;
+      break;
+    default:
+      throw new Error();
+  }
+});
+
 const useDataApiWithReducer = (initialUrl, initialData) => {
   const [url, setUrl] = useState(initialUrl);
 
@@ -37,7 +62,8 @@ const useDataApiWithReducer = (initialUrl, initialData) => {
   // The hook  useReducer receives a reducer function and an initial state as arguments
   // and returns an array with two items.
   // The first item is the current state; the second item is the state updater function (also called dispatch function):
-  const [state, dispatch] = useReducer(dataFetchReducer, {
+  // const [state, dispatch] = useReducer(dataFetchReducer, {
+  const [state, dispatch] = useReducer(dataFetchImmerReducer, {
     isLoading: false,
     isError: false,
     data: initialData,
