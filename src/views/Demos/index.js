@@ -1,10 +1,11 @@
 import Chosen from '@/components/Chosen';
-import useHackerNewsApi from '@/components/Hooks/useHackerNewsApi';
 import useDataApi from '@/components/Hooks/useDataApi';
 import useDataApiWithReducer from '@/components/Hooks/useDataApiWithReducer';
+import useHackerNewsApi from '@/components/Hooks/useHackerNewsApi';
 import Slider from '@/components/Slider';
 import { Button } from 'antd';
 import axios from 'axios';
+import produce from 'immer';
 import React, {
   Fragment,
   useCallback,
@@ -69,17 +70,67 @@ const comment = {
 };
 
 /**
+ * ! [immer](https://github.com/immerjs/immer)
+ * Create the next immutable state by mutating the current one
+ */
+const baseState = [
+  {
+    todo: 'Learn typescript',
+    done: true,
+  },
+  {
+    todo: 'Try immer',
+    done: false,
+  },
+];
+const nextState = produce(baseState, draftState => {
+  draftState.push({ todo: 'Tweet about it' });
+  draftState[1].done = true;
+});
+
+console.log('baseState :', baseState);
+console.log('nextState :', nextState);
+console.log('baseState[0] === nextState[0] :', baseState[0] === nextState[0]);
+
+/**
  * 生命周期
  */
 class ButtonLifeCycle extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { data: 0 };
+    this.state = {
+      data: 0,
+      user: { age: 20, name: 'C' },
+      user2: { age: 20, name: 'C' },
+    };
     this.setNewNumber = this.setNewNumber.bind(this);
   }
 
   setNewNumber() {
     this.setState({ data: this.state.data + 1 });
+    const user = this.state.user;
+
+    /**
+     * Classic React.setState with a deep merge
+     */
+    const newUser = {
+      ...user,
+      age: user.age + 1,
+    };
+    this.setState({
+      user: newUser,
+    });
+    console.log('setState user', user, newUser, user === newUser);
+
+    /**
+     * ...But, since setState accepts functions,
+     * we can just create a curried producer and further simplify!
+     */
+    this.setState(
+      produce(draft => {
+        draft.user2.age += 1;
+      })
+    );
   }
   render() {
     return (
